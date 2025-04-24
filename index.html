@@ -15,14 +15,25 @@
 
     <div id="sidebar" class="sidebar hidden">
       <h2>Selecteer blok</h2>
-      
       <div class="block-palette">
         <div class="block draggable" draggable="true">Blok A</div>
         <div class="block draggable" draggable="true">Blok B</div>
       </div>
+      <button id="closeSidebar">Sluit</button>
     </div>
   </div>
 
-  <script src="app.js" type="module"></script>
+  <div id="popup" class="hidden popup-overlay" role="dialog" aria-labelledby="popupTitle">
+    <div class="popup-content">
+      <h2 id="popupTitle">Blok Details</h2>
+      <label for="popupTitleInput">Titel:</label>
+      <input type="text" id="popupTitleInput" />
+      <label for="popupDesc">Beschrijving:</label>
+      <textarea id="popupDesc"></textarea>
+      <button id="savePopup">Opslaan</button>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
 </body>
 </html>
