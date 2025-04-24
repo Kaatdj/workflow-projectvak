@@ -19,7 +19,7 @@ body {
   display: flex;
   position: relative;
   height: 100%;
-  overflow: hidden; /* Prevent overflow issues */
+  overflow: visible; /* Allow the canvas to overflow */
 }
 
 .canvas {
@@ -32,6 +32,7 @@ body {
   background: #f3f3f3;
   transform-origin: top left; /* Ensure zooming starts from the top-left corner */
   position: relative;
+  box-sizing: border-box; /* Ensure padding is included in the dimensions */
 }
 
 .sidebar {
