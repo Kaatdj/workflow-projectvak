@@ -30,43 +30,9 @@ window.addEventListener("DOMContentLoaded", () => {
     sidebar.classList.add("hidden");
   });
 
-  // Create 3 columns
-  for (let i = 0; i < 3; i++) {
-    const col = document.createElement("div");
-    col.classList.add("column");
-    col.dataset.index = i.toString();
-
-    col.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      col.classList.add("highlight");
-    });
-
-    col.addEventListener("dragleave", () => {
-      col.classList.remove("highlight");
-    });
-
-    col.addEventListener("drop", (e) => {
-      e.preventDefault();
-      col.classList.remove("highlight");
-
-      if (draggedBlock) {
-        const clone = draggedBlock.cloneNode(true) as HTMLElement;
-        clone.classList.remove("draggable");
-        clone.style.cursor = "default";
-
-        currentBlock = clone;
-
-        col.appendChild(clone);
-
-        // Show the popup to fill in block details
-        popup.classList.remove("hidden");
-
-        draggedBlock = null;
-      }
-    });
-
-    canvas.appendChild(col);
-  }
+  // Create the initial columns, including the "start" block in the first column
+  createColumn(canvas, true); // First column with "start" block
+  createColumn(canvas); // Always have an extra column
 
   // Set up drag events for blocks in the palette
   document.querySelectorAll(".draggable").forEach((el) => {
@@ -106,4 +72,65 @@ window.addEventListener("DOMContentLoaded", () => {
       currentBlock = null;
     }
   });
+
+  // Function to create a new column
+  function createColumn(parent: HTMLElement, isStartColumn = false) {
+    const col = document.createElement("div");
+    col.classList.add("column");
+
+    if (isStartColumn) {
+      // Add the "start" block to the first column
+      const startBlock = document.createElement("div");
+      startBlock.classList.add("block", "start-block");
+      startBlock.innerText = "Start";
+      col.appendChild(startBlock);
+    }
+
+    col.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      col.classList.add("highlight");
+    });
+
+    col.addEventListener("dragleave", () => {
+      col.classList.remove("highlight");
+    });
+
+    col.addEventListener("drop", (e) => {
+      e.preventDefault();
+      col.classList.remove("highlight");
+
+      if (draggedBlock) {
+        const clone = draggedBlock.cloneNode(true) as HTMLElement;
+        clone.classList.remove("draggable");
+        clone.style.cursor = "default";
+
+        currentBlock = clone;
+
+        col.appendChild(clone);
+
+        // Show the popup to fill in block details
+        if (popup) {
+          popup.classList.remove("hidden");
+        }
+
+        draggedBlock = null;
+
+        // Ensure there is always an extra column
+        ensureExtraColumn();
+      }
+    });
+
+    parent.appendChild(col);
+  }
+
+  // Function to ensure there is always an extra column
+  function ensureExtraColumn() {
+    const columns = canvas ? canvas.querySelectorAll(".column") : [];
+    const lastColumn = columns[columns.length - 1];
+
+    // If the last column has any blocks, add a new empty column
+    if (lastColumn && lastColumn.children.length > 0) {
+      createColumn(canvas);
+    }
+  }
 });

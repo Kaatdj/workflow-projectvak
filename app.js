@@ -24,37 +24,9 @@ window.addEventListener("DOMContentLoaded", function () {
     closeSidebar.addEventListener("click", function () {
         sidebar.classList.add("hidden");
     });
-    var _loop_1 = function (i) {
-        var col = document.createElement("div");
-        col.classList.add("column");
-        col.dataset.index = i.toString();
-        col.addEventListener("dragover", function (e) {
-            e.preventDefault();
-            col.classList.add("highlight");
-        });
-        col.addEventListener("dragleave", function () {
-            col.classList.remove("highlight");
-        });
-        col.addEventListener("drop", function (e) {
-            e.preventDefault();
-            col.classList.remove("highlight");
-            if (draggedBlock) {
-                var clone = draggedBlock.cloneNode(true);
-                clone.classList.remove("draggable");
-                clone.style.cursor = "default";
-                currentBlock = clone;
-                col.appendChild(clone);
-                // Show the popup to fill in block details
-                popup.classList.remove("hidden");
-                draggedBlock = null;
-            }
-        });
-        canvas.appendChild(col);
-    };
-    // Create 3 columns
-    for (var i = 0; i < 3; i++) {
-        _loop_1(i);
-    }
+    // Create the initial columns, including the "start" block in the first column
+    createColumn(canvas, true); // First column with "start" block
+    createColumn(canvas); // Always have an extra column
     // Set up drag events for blocks in the palette
     document.querySelectorAll(".draggable").forEach(function (el) {
         el.addEventListener("dragstart", function () {
@@ -87,4 +59,52 @@ window.addEventListener("DOMContentLoaded", function () {
             currentBlock = null;
         }
     });
+    // Function to create a new column
+    function createColumn(parent, isStartColumn) {
+        if (isStartColumn === void 0) { isStartColumn = false; }
+        var col = document.createElement("div");
+        col.classList.add("column");
+        if (isStartColumn) {
+            // Add the "start" block to the first column
+            var startBlock = document.createElement("div");
+            startBlock.classList.add("block", "start-block");
+            startBlock.innerText = "Start";
+            col.appendChild(startBlock);
+        }
+        col.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            col.classList.add("highlight");
+        });
+        col.addEventListener("dragleave", function () {
+            col.classList.remove("highlight");
+        });
+        col.addEventListener("drop", function (e) {
+            e.preventDefault();
+            col.classList.remove("highlight");
+            if (draggedBlock) {
+                var clone = draggedBlock.cloneNode(true);
+                clone.classList.remove("draggable");
+                clone.style.cursor = "default";
+                currentBlock = clone;
+                col.appendChild(clone);
+                // Show the popup to fill in block details
+                if (popup) {
+                    popup.classList.remove("hidden");
+                }
+                draggedBlock = null;
+                // Ensure there is always an extra column
+                ensureExtraColumn();
+            }
+        });
+        parent.appendChild(col);
+    }
+    // Function to ensure there is always an extra column
+    function ensureExtraColumn() {
+        var columns = canvas ? canvas.querySelectorAll(".column") : [];
+        var lastColumn = columns[columns.length - 1];
+        // If the last column has any blocks, add a new empty column
+        if (lastColumn && lastColumn.children.length > 0) {
+            createColumn(canvas);
+        }
+    }
 });
