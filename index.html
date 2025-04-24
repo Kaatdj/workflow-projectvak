@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Workflow Canvas</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="toolbar">
+    <button id="editBtn">Bewerk</button>
+  </div>
+
+  <div class="wrapper">
+    <div id="canvas" class="canvas"></div>
+
+    <div id="sidebar" class="sidebar hidden">
+      <h2>Selecteer blok</h2>
+      
+      <div class="block-palette">
+        <div class="block draggable" draggable="true">Blok A</div>
+        <div class="block draggable" draggable="true">Blok B</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>
