@@ -4,6 +4,7 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden; /* Prevent scrolling on the body */
 }
 
 .toolbar {
@@ -19,7 +20,7 @@ body {
   display: flex;
   position: relative;
   height: 100%;
-  overflow: visible; /* Allow the canvas to overflow */
+  overflow: hidden; /* Prevent scrolling on the wrapper */
 }
 
 .canvas {
@@ -57,7 +58,7 @@ body {
 .block {
   width: 80%;
   height: 100px;
-  background-color: #f0f0f0;
+  background-color: #f9f9f9;
   border: 1px solid #ccc;
   border-radius: 8px;
   display: flex;
@@ -66,7 +67,22 @@ body {
   text-align: center;
   font-size: 16px;
   cursor: pointer;
-  margin-bottom: 10px; /* Fixed gap between blocks */
+  margin-bottom: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Added shadow */
+}
+
+.add-task {
+  display: flex;
+  flex-direction: column; 
+  align-items: center; /* Center the content horizontally */
+  justify-content: center; /* Center the content vertically */
+  color: rgb(188, 188, 188); 
+}
+
+.add-task p {
+  margin: 2px;
+  font-size: 14px; 
+  text-align: center; /* Center text */
 }
 
 .column {
@@ -100,10 +116,11 @@ body {
 }
 
 .popup input,
-.popup textarea {
+.popup textarea,
+.popup select{
   width: 100%;
-  padding: 6px;
-  border: 1px solid #ccc;
+  padding: 12px;
+  border: 1px solid #cccccca9;
   border-radius: 4px;
 }
 
@@ -125,6 +142,9 @@ body {
 }
 
 .popup-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
   background: white;
   padding: 20px;
   border-radius: 8px;

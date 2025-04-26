@@ -16,10 +16,16 @@
     <div id="canvas" class="canvas"></div>
 
     <div id="sidebar" class="sidebar hidden">
-      <h2>Selecteer blok</h2>
+      <h2>New Task</h2>
       <div class="block-palette">
         <div class="block draggable" draggable="true">Blok A</div>
         <div class="block draggable" draggable="true">Blok B</div>
+        <div class="block draggable" draggable="true">
+          <div class="add-task">
+            <p style="font-size:24px">+</p>
+            <p>Add new task</p>
+          </div>
+        </div>
       </div>
       <button id="closeSidebar">Sluit</button>
     </div>
@@ -27,11 +33,15 @@
 
   <div id="popup" class="hidden popup-overlay" role="dialog" aria-labelledby="popupTitle">
     <div class="popup-content">
-      <h2 id="popupTitle">Blok Details</h2>
-      <label for="popupTitleInput">Titel:</label>
-      <input type="text" id="popupTitleInput" />
-      <label for="popupDesc">Beschrijving:</label>
-      <textarea id="popupDesc"></textarea>
+      <h2 id="popupTitle">New Task</h2>
+      <input type="text" id="popupTitleInput" placeholder="Task Title"/>
+      <select id="popupType" placeholder="Select Members">
+        <option value="type1">Member 1</option>
+        <option value="type2">Member 2</option>
+        <option value="type3">Member 3</option>
+      </select>
+      <textarea id="popupDesc" placeholder="Task Description"></textarea>
+      <input type="text" id="popupDueDate" placeholder="Due Date"/>
       <button id="savePopup">Opslaan</button>
     </div>
   </div>
