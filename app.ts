@@ -157,8 +157,12 @@ window.addEventListener("DOMContentLoaded", () => {
         // Create a bracket for the column
         const firstBlock = blocks[0];
         const lastBlock = blocks[blocks.length - 1];
-        const bracket = document.createElement("div");
-        bracket.classList.add("bracket");
+        const horizontalLine = document.createElement("div");
+        horizontalLine.classList.add("horizontal-line");
+        const leftBracket = document.createElement("div");
+        leftBracket.classList.add("bracket-left");
+        const rightBracket = document.createElement("div");
+        rightBracket.classList.add("bracket-right");
 
         // Calculate the position and height of the bracket
         const firstBlockRect = firstBlock.getBoundingClientRect();
@@ -168,17 +172,35 @@ window.addEventListener("DOMContentLoaded", () => {
         const top = firstBlockRect.top + firstBlockRect.height / 2 - canvasRect.top;
         const bottom = lastBlockRect.bottom - lastBlockRect.height / 2 - canvasRect.top; // Bottom of the last block
         const height = bottom - top;
+        const center = top + height / 2;
 
-        bracket.style.position = "absolute";
-        bracket.style.top = `${top}px`;
-        bracket.style.left = `${(column as HTMLElement).offsetLeft + 20}px`; // Position the bracket to the left of the column
-        bracket.style.height = `${height}px`;
-        bracket.style.borderLeft = "2px solid grey"; // Vertical line
-        bracket.style.borderTop = "2px solid grey"; // Top horizontal line
-        bracket.style.width = "20px"; // Width of the horizontal line
-        bracket.style.transform = "translateX(-100%)"; // Ensure the bracket is fully to the left of the column
+        // Horizontal line styles
+        horizontalLine.style.position = "absolute";
+        horizontalLine.style.top = `${center}px`;
+        horizontalLine.style.left = `${(column as HTMLElement).offsetLeft + 6.5}px`; // Adjust position to make it visible
+        horizontalLine.style.width = "33px"; // Increase the width for visibility
+        horizontalLine.style.transform = "translateX(-100%)"; // Ensure the line is fully to the left of the column
 
-        bracketsContainer.appendChild(bracket);
+        bracketsContainer.appendChild(horizontalLine);
+
+        // Left bracket styles
+        leftBracket.style.position = "absolute";
+        leftBracket.style.top = `${top}px`;
+        leftBracket.style.left = `${(column as HTMLElement).offsetLeft + 22}px`; // Position the bracket to the left of the column
+        leftBracket.style.height = `${height}px`;
+        leftBracket.style.width = "15px"; // Width of the horizontal lines
+        leftBracket.style.transform = "translateX(-100%)"; // Ensure the bracket is fully to the left of the column
+
+        bracketsContainer.appendChild(leftBracket);
+
+        // Right bracket styles
+        rightBracket.style.position = "absolute";
+        rightBracket.style.top = `${top}px`;
+        rightBracket.style.left = `${(column as HTMLElement).offsetLeft + (column as HTMLElement).offsetWidth - 22}px`; // Position the bracket to the right of the column
+        rightBracket.style.height = `${height}px`;
+        rightBracket.style.width = "15px"; // Width of the horizontal lines
+
+        bracketsContainer.appendChild(rightBracket);
       }
     });
   }

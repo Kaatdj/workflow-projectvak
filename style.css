@@ -187,8 +187,42 @@ button:hover {
 
 .bracket {
   position: absolute;
-  border-left: 2px solid black; /* Vertical line for the bracket */
-  border-top: 2px solid black; /* Top horizontal line for the bracket */
+  border-left: 2px solid  rgb(188, 188, 188); /* Vertical line for the bracket */
+  border-top: 2px solid rgb(188, 188, 188); /* Top horizontal line for the bracket */
+  border-bottom: 2px solid rgb(188, 188, 188); /* Bottom horizontal line for the bracket */
+  border-radius: 4px; /* Rounded corners */
   width: 10px; /* Width of the horizontal line */
   height: 0; /* Height will be dynamically set */
 }
+
+.horizontal-line {
+  position: absolute;
+  background-color: rgb(188, 188, 188); /* Color of the line */
+  height: 0.5px; /* Fixed height for the horizontal line */
+  width: 0; /* Width will be dynamically set */
+  transform-origin: left; /* Ensure the line grows from the left */
+  overflow: visible; /* Allow overflow for the line */
+}
+
+.bracket-left {
+  position: absolute;
+  border-left: 1px solid rgb(188, 188, 188); /* Vertical line for the left bracket */
+  border-top: 1px solid rgb(188, 188, 188); /* Top horizontal line for the left bracket */
+  border-bottom: 1px solid rgb(188, 188, 188); /* Bottom horizontal line for the left bracket */
+  border-radius: 4px; /* Rounded corners */
+  width: 10px; /* Width of the horizontal lines */
+  height: 0; /* Height will be dynamically set */
+  transform: translateX(-100%); /* Ensure the left bracket is fully to the left of the column */
+}
+
+.bracket-right {
+  position: absolute;
+  border-right: 1px solid rgb(188, 188, 188); /* Vertical line for the right bracket */
+  border-top: 1px solid rgb(188, 188, 188); /* Top horizontal line for the right bracket */
+  border-bottom: 1px solid rgb(188, 188, 188); /* Bottom horizontal line for the right bracket */
+  border-radius: 4px; /* Rounded corners */
+  width: 10px; /* Width of the horizontal lines */
+  height: 0; /* Height will be dynamically set */
+  transform: translateX(0); /* Ensure the right bracket is fully to the right of the column */
+}
+
