@@ -203,11 +203,11 @@ window.addEventListener("DOMContentLoaded", function () {
                 horizontalLine.style.top = "".concat(center, "px");
                 horizontalLine.style.transform = "translateX(-100%)";
                 if (prevBlocks.length > 1) {
-                    horizontalLine.style.left = "".concat(column.offsetLeft - 0.5, "px");
+                    horizontalLine.style.left = "".concat(column.offsetLeft + 24, "px");
                     horizontalLine.style.width = "50px";
                 }
                 else if (prevBlocks.length === 1) {
-                    horizontalLine.style.left = "".concat(column.offsetLeft + 0.5, "px");
+                    horizontalLine.style.left = "".concat(column.offsetLeft + 22, "px");
                     horizontalLine.style.width = "100px";
                 }
                 bracketsContainer.appendChild(horizontalLine);
