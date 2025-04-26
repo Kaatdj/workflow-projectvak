@@ -121,7 +121,9 @@ window.addEventListener("DOMContentLoaded", function () {
         }
     }
     // Function to update brackets
+    // Function to update brackets
     function updateBrackets() {
+        var canvas = document.getElementById("canvas"); // <-- You missed this!
         var bracketsContainer = document.getElementById("brackets");
         var columns = canvas === null || canvas === void 0 ? void 0 : canvas.querySelectorAll(".column");
         if (!canvas || !bracketsContainer || !columns)
@@ -130,59 +132,85 @@ window.addEventListener("DOMContentLoaded", function () {
         bracketsContainer.innerHTML = "";
         columns.forEach(function (column, columnIndex) {
             var blocks = column.querySelectorAll(".block");
+            var prevColumn = columns[columnIndex - 1];
+            var nextColumn = columns[columnIndex + 1];
             if (blocks.length >= 2) {
-                // Create a bracket for the column
                 var firstBlock = blocks[0];
                 var lastBlock = blocks[blocks.length - 1];
-                var horizontalLine = document.createElement("div");
-                horizontalLine.classList.add("horizontal-line");
-                var leftBracket = document.createElement("div");
-                leftBracket.classList.add("bracket-left");
-                // Calculate the position and height of the bracket
                 var firstBlockRect = firstBlock.getBoundingClientRect();
                 var lastBlockRect = lastBlock.getBoundingClientRect();
                 var canvasRect = canvas.getBoundingClientRect();
                 var top_1 = firstBlockRect.top + firstBlockRect.height / 2 - canvasRect.top;
-                var bottom = lastBlockRect.bottom - lastBlockRect.height / 2 - canvasRect.top; // Bottom of the last block
+                var bottom = lastBlockRect.bottom - lastBlockRect.height / 2 - canvasRect.top;
                 var height = bottom - top_1;
                 var center = top_1 + height / 2;
-                // Horizontal line styles
-                horizontalLine.style.position = "absolute";
-                horizontalLine.style.top = "".concat(center, "px");
-                horizontalLine.style.left = "".concat(column.offsetLeft + 6.5, "px"); // Adjust position to make it visible
-                horizontalLine.style.width = "33px"; // Increase the width for visibility
-                horizontalLine.style.transform = "translateX(-100%)"; // Ensure the line is fully to the left of the column
-                bracketsContainer.appendChild(horizontalLine);
-                // Left bracket styles
+                // Left bracket
+                var leftBracket = document.createElement("div");
+                leftBracket.classList.add("bracket-left");
                 leftBracket.style.position = "absolute";
                 leftBracket.style.top = "".concat(top_1, "px");
-                leftBracket.style.left = "".concat(column.offsetLeft + 22, "px"); // Position the bracket to the left of the column
+                leftBracket.style.left = "".concat(column.offsetLeft + 22, "px");
                 leftBracket.style.height = "".concat(height, "px");
-                leftBracket.style.width = "15px"; // Width of the horizontal lines
-                leftBracket.style.transform = "translateX(-100%)"; // Ensure the bracket is fully to the left of the column
+                leftBracket.style.width = "15px";
+                leftBracket.style.transform = "translateX(-100%)";
                 bracketsContainer.appendChild(leftBracket);
-                var nextColumn = columns[columnIndex + 1];
+                // Horizontal line depending on previous column
+                if (prevColumn) {
+                    var prevBlocks = prevColumn.querySelectorAll(".block");
+                    var horizontalLine = document.createElement("div");
+                    horizontalLine.classList.add("horizontal-line");
+                    horizontalLine.style.position = "absolute";
+                    horizontalLine.style.top = "".concat(center, "px");
+                    horizontalLine.style.left = "".concat(column.offsetLeft + 6.5, "px");
+                    horizontalLine.style.transform = "translateX(-100%)";
+                    if (prevBlocks.length > 1) {
+                        horizontalLine.style.width = "33px";
+                    }
+                    else {
+                        horizontalLine.style.width = "50px";
+                    }
+                    bracketsContainer.appendChild(horizontalLine);
+                }
+                // Right bracket if there's a next column
                 if (nextColumn) {
                     var nextBlocks = nextColumn.querySelectorAll(".block");
                     if (nextBlocks.length > 0) {
-                        var firstBlockRect_1 = firstBlock.getBoundingClientRect();
-                        var lastBlockRect_1 = lastBlock.getBoundingClientRect();
-                        var canvasRect_1 = canvas.getBoundingClientRect();
-                        var top_2 = firstBlockRect_1.top + firstBlockRect_1.height / 2 - canvasRect_1.top;
-                        var bottom_1 = lastBlockRect_1.bottom - lastBlockRect_1.height / 2 - canvasRect_1.top; // Bottom of the last block
-                        var height_1 = bottom_1 - top_2;
-                        var center_1 = top_2 + height_1 / 2;
                         var rightBracket = document.createElement("div");
                         rightBracket.classList.add("bracket-right");
-                        // Right bracket styles
                         rightBracket.style.position = "absolute";
-                        rightBracket.style.top = "".concat(top_2, "px");
-                        rightBracket.style.left = "".concat(column.offsetLeft + column.offsetWidth - 22, "px"); // Position the bracket to the right of the column
-                        rightBracket.style.height = "".concat(height_1, "px");
-                        rightBracket.style.width = "15px"; // Width of the horizontal lines
+                        rightBracket.style.top = "".concat(top_1, "px");
+                        rightBracket.style.left = "".concat(column.offsetLeft + column.offsetWidth - 22, "px");
+                        rightBracket.style.height = "".concat(height, "px");
+                        rightBracket.style.width = "15px";
                         bracketsContainer.appendChild(rightBracket);
                     }
                 }
+            }
+            else if (blocks.length === 1 && prevColumn) {
+                var firstBlock = blocks[0];
+                var lastBlock = blocks[blocks.length - 1];
+                var firstBlockRect = firstBlock.getBoundingClientRect();
+                var lastBlockRect = lastBlock.getBoundingClientRect();
+                var canvasRect = canvas.getBoundingClientRect();
+                var top_2 = firstBlockRect.top + firstBlockRect.height / 2 - canvasRect.top;
+                var bottom = lastBlockRect.bottom - lastBlockRect.height / 2 - canvasRect.top;
+                var height = bottom - top_2;
+                var center = top_2 + height / 2;
+                var prevBlocks = prevColumn.querySelectorAll(".block");
+                var horizontalLine = document.createElement("div");
+                horizontalLine.classList.add("horizontal-line");
+                horizontalLine.style.position = "absolute";
+                horizontalLine.style.top = "".concat(center, "px");
+                horizontalLine.style.transform = "translateX(-100%)";
+                if (prevBlocks.length > 1) {
+                    horizontalLine.style.left = "".concat(column.offsetLeft - 0.5, "px");
+                    horizontalLine.style.width = "50px";
+                }
+                else if (prevBlocks.length === 1) {
+                    horizontalLine.style.left = "".concat(column.offsetLeft + 0.5, "px");
+                    horizontalLine.style.width = "100px";
+                }
+                bracketsContainer.appendChild(horizontalLine);
             }
         });
     }
