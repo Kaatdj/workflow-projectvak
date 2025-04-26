@@ -91,6 +91,12 @@ window.addEventListener("DOMContentLoaded", () => {
 
     col.addEventListener("dragover", (e) => {
       e.preventDefault();
+
+      // Prevent highlighting the first column
+      if (isStartColumn) {
+        return;
+      }
+
       col.classList.add("highlight");
     });
 
@@ -101,6 +107,12 @@ window.addEventListener("DOMContentLoaded", () => {
     col.addEventListener("drop", (e) => {
       e.preventDefault();
       col.classList.remove("highlight");
+
+      // Prevent adding blocks to the first column
+      if (isStartColumn) {
+        console.log("Cannot add blocks to the first column.");
+        return;
+      }
 
       if (draggedBlock) {
         const clone = draggedBlock.cloneNode(true) as HTMLElement;

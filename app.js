@@ -75,6 +75,10 @@ window.addEventListener("DOMContentLoaded", function () {
         }
         col.addEventListener("dragover", function (e) {
             e.preventDefault();
+            // Prevent highlighting the first column
+            if (isStartColumn) {
+                return;
+            }
             col.classList.add("highlight");
         });
         col.addEventListener("dragleave", function () {
@@ -83,6 +87,11 @@ window.addEventListener("DOMContentLoaded", function () {
         col.addEventListener("drop", function (e) {
             e.preventDefault();
             col.classList.remove("highlight");
+            // Prevent adding blocks to the first column
+            if (isStartColumn) {
+                console.log("Cannot add blocks to the first column.");
+                return;
+            }
             if (draggedBlock) {
                 var clone = draggedBlock.cloneNode(true);
                 clone.classList.remove("draggable");
