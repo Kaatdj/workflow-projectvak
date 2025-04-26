@@ -46,6 +46,8 @@ window.addEventListener("DOMContentLoaded", function () {
             // Hide the popup
             popup.classList.add("hidden");
             currentBlock = null;
+            // Update brackets after saving
+            updateBrackets();
         }
     });
     // Close popup when clicking outside of it
@@ -94,6 +96,8 @@ window.addEventListener("DOMContentLoaded", function () {
                 draggedBlock = null;
                 // Ensure there is always an extra column
                 ensureExtraColumn();
+                // Update brackets
+                updateBrackets();
             }
         });
         parent.appendChild(col);
@@ -107,4 +111,42 @@ window.addEventListener("DOMContentLoaded", function () {
             createColumn(canvas);
         }
     }
+    // Function to update brackets
+    function updateBrackets() {
+        var bracketsContainer = document.getElementById("brackets");
+        var columns = canvas === null || canvas === void 0 ? void 0 : canvas.querySelectorAll(".column");
+        if (!canvas || !bracketsContainer || !columns)
+            return;
+        // Clear existing brackets
+        bracketsContainer.innerHTML = "";
+        columns.forEach(function (column) {
+            var blocks = column.querySelectorAll(".block");
+            if (blocks.length >= 2) {
+                // Create a bracket for the column
+                var firstBlock = blocks[0];
+                var lastBlock = blocks[blocks.length - 1];
+                var bracket = document.createElement("div");
+                bracket.classList.add("bracket");
+                // Calculate the position and height of the bracket
+                var firstBlockRect = firstBlock.getBoundingClientRect();
+                var lastBlockRect = lastBlock.getBoundingClientRect();
+                var canvasRect = canvas.getBoundingClientRect();
+                var top_1 = firstBlockRect.top + firstBlockRect.height / 2 - canvasRect.top;
+                var bottom = lastBlockRect.bottom - lastBlockRect.height / 2 - canvasRect.top; // Bottom of the last block
+                var height = bottom - top_1;
+                bracket.style.position = "absolute";
+                bracket.style.top = "".concat(top_1, "px");
+                bracket.style.left = "".concat(column.offsetLeft + 20, "px"); // Position the bracket to the left of the column
+                bracket.style.bottom = "".concat(bottom, "px");
+                bracket.style.height = "".concat(height, "px");
+                bracket.style.borderLeft = "2px solid grey"; // Vertical line
+                bracket.style.borderTop = "2px solid grey"; // Top horizontal line
+                bracket.style.width = "20px"; // Width of the horizontal line
+                bracket.style.transform = "translateX(-100%)"; // Ensure the bracket is fully to the left of the column
+                bracketsContainer.appendChild(bracket);
+            }
+        });
+    }
+    // Call this function whenever blocks are added, removed, or moved
+    updateBrackets();
 });

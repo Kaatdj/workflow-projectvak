@@ -57,6 +57,9 @@ window.addEventListener("DOMContentLoaded", () => {
       // Hide the popup
       popup.classList.add("hidden");
       currentBlock = null;
+
+      // Update brackets after saving
+      updateBrackets();
     }
   });
 
@@ -117,6 +120,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
         // Ensure there is always an extra column
         ensureExtraColumn();
+
+        // Update brackets
+        updateBrackets();
       }
     });
 
@@ -133,4 +139,50 @@ window.addEventListener("DOMContentLoaded", () => {
       createColumn(canvas);
     }
   }
+
+  // Function to update brackets
+  function updateBrackets() {
+    const bracketsContainer = document.getElementById("brackets");
+    const columns = canvas?.querySelectorAll(".column");
+
+    if (!canvas || !bracketsContainer || !columns) return;
+
+    // Clear existing brackets
+    bracketsContainer.innerHTML = "";
+
+    columns.forEach((column) => {
+      const blocks = column.querySelectorAll(".block");
+
+      if (blocks.length >= 2) {
+        // Create a bracket for the column
+        const firstBlock = blocks[0];
+        const lastBlock = blocks[blocks.length - 1];
+        const bracket = document.createElement("div");
+        bracket.classList.add("bracket");
+
+        // Calculate the position and height of the bracket
+        const firstBlockRect = firstBlock.getBoundingClientRect();
+        const lastBlockRect = lastBlock.getBoundingClientRect();
+        const canvasRect = canvas.getBoundingClientRect();
+
+        const top = firstBlockRect.top + firstBlockRect.height / 2 - canvasRect.top;
+        const bottom = lastBlockRect.bottom - lastBlockRect.height / 2 - canvasRect.top; // Bottom of the last block
+        const height = bottom - top;
+
+        bracket.style.position = "absolute";
+        bracket.style.top = `${top}px`;
+        bracket.style.left = `${(column as HTMLElement).offsetLeft + 20}px`; // Position the bracket to the left of the column
+        bracket.style.height = `${height}px`;
+        bracket.style.borderLeft = "2px solid grey"; // Vertical line
+        bracket.style.borderTop = "2px solid grey"; // Top horizontal line
+        bracket.style.width = "20px"; // Width of the horizontal line
+        bracket.style.transform = "translateX(-100%)"; // Ensure the bracket is fully to the left of the column
+
+        bracketsContainer.appendChild(bracket);
+      }
+    });
+  }
+
+  // Call this function whenever blocks are added, removed, or moved
+  updateBrackets();
 });
