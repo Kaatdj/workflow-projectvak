@@ -128,7 +128,7 @@ window.addEventListener("DOMContentLoaded", function () {
             return;
         // Clear existing brackets
         bracketsContainer.innerHTML = "";
-        columns.forEach(function (column) {
+        columns.forEach(function (column, columnIndex) {
             var blocks = column.querySelectorAll(".block");
             if (blocks.length >= 2) {
                 // Create a bracket for the column
@@ -138,8 +138,6 @@ window.addEventListener("DOMContentLoaded", function () {
                 horizontalLine.classList.add("horizontal-line");
                 var leftBracket = document.createElement("div");
                 leftBracket.classList.add("bracket-left");
-                var rightBracket = document.createElement("div");
-                rightBracket.classList.add("bracket-right");
                 // Calculate the position and height of the bracket
                 var firstBlockRect = firstBlock.getBoundingClientRect();
                 var lastBlockRect = lastBlock.getBoundingClientRect();
@@ -163,13 +161,28 @@ window.addEventListener("DOMContentLoaded", function () {
                 leftBracket.style.width = "15px"; // Width of the horizontal lines
                 leftBracket.style.transform = "translateX(-100%)"; // Ensure the bracket is fully to the left of the column
                 bracketsContainer.appendChild(leftBracket);
-                // Right bracket styles
-                rightBracket.style.position = "absolute";
-                rightBracket.style.top = "".concat(top_1, "px");
-                rightBracket.style.left = "".concat(column.offsetLeft + column.offsetWidth - 22, "px"); // Position the bracket to the right of the column
-                rightBracket.style.height = "".concat(height, "px");
-                rightBracket.style.width = "15px"; // Width of the horizontal lines
-                bracketsContainer.appendChild(rightBracket);
+                var nextColumn = columns[columnIndex + 1];
+                if (nextColumn) {
+                    var nextBlocks = nextColumn.querySelectorAll(".block");
+                    if (nextBlocks.length > 0) {
+                        var firstBlockRect_1 = firstBlock.getBoundingClientRect();
+                        var lastBlockRect_1 = lastBlock.getBoundingClientRect();
+                        var canvasRect_1 = canvas.getBoundingClientRect();
+                        var top_2 = firstBlockRect_1.top + firstBlockRect_1.height / 2 - canvasRect_1.top;
+                        var bottom_1 = lastBlockRect_1.bottom - lastBlockRect_1.height / 2 - canvasRect_1.top; // Bottom of the last block
+                        var height_1 = bottom_1 - top_2;
+                        var center_1 = top_2 + height_1 / 2;
+                        var rightBracket = document.createElement("div");
+                        rightBracket.classList.add("bracket-right");
+                        // Right bracket styles
+                        rightBracket.style.position = "absolute";
+                        rightBracket.style.top = "".concat(top_2, "px");
+                        rightBracket.style.left = "".concat(column.offsetLeft + column.offsetWidth - 22, "px"); // Position the bracket to the right of the column
+                        rightBracket.style.height = "".concat(height_1, "px");
+                        rightBracket.style.width = "15px"; // Width of the horizontal lines
+                        bracketsContainer.appendChild(rightBracket);
+                    }
+                }
             }
         });
     }

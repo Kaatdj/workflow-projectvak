@@ -162,7 +162,7 @@ window.addEventListener("DOMContentLoaded", () => {
     // Clear existing brackets
     bracketsContainer.innerHTML = "";
 
-    columns.forEach((column) => {
+    columns.forEach((column, columnIndex) => {
       const blocks = column.querySelectorAll(".block");
 
       if (blocks.length >= 2) {
@@ -173,8 +173,7 @@ window.addEventListener("DOMContentLoaded", () => {
         horizontalLine.classList.add("horizontal-line");
         const leftBracket = document.createElement("div");
         leftBracket.classList.add("bracket-left");
-        const rightBracket = document.createElement("div");
-        rightBracket.classList.add("bracket-right");
+
 
         // Calculate the position and height of the bracket
         const firstBlockRect = firstBlock.getBoundingClientRect();
@@ -205,14 +204,32 @@ window.addEventListener("DOMContentLoaded", () => {
 
         bracketsContainer.appendChild(leftBracket);
 
-        // Right bracket styles
-        rightBracket.style.position = "absolute";
-        rightBracket.style.top = `${top}px`;
-        rightBracket.style.left = `${(column as HTMLElement).offsetLeft + (column as HTMLElement).offsetWidth - 22}px`; // Position the bracket to the right of the column
-        rightBracket.style.height = `${height}px`;
-        rightBracket.style.width = "15px"; // Width of the horizontal lines
+        const nextColumn = columns[columnIndex + 1];
+        if (nextColumn) {
+          const nextBlocks = nextColumn.querySelectorAll(".block");
+          if (nextBlocks.length > 0) {
+            const firstBlockRect = firstBlock.getBoundingClientRect();
+            const lastBlockRect = lastBlock.getBoundingClientRect();
+            const canvasRect = canvas.getBoundingClientRect();
+    
+            const top = firstBlockRect.top + firstBlockRect.height / 2 - canvasRect.top;
+            const bottom = lastBlockRect.bottom - lastBlockRect.height / 2 - canvasRect.top; // Bottom of the last block
+            const height = bottom - top;
+            const center = top + height / 2;
+            const rightBracket = document.createElement("div");
+            rightBracket.classList.add("bracket-right");
 
-        bracketsContainer.appendChild(rightBracket);
+
+          // Right bracket styles
+          rightBracket.style.position = "absolute";
+          rightBracket.style.top = `${top}px`;
+          rightBracket.style.left = `${(column as HTMLElement).offsetLeft + (column as HTMLElement).offsetWidth - 22}px`; // Position the bracket to the right of the column
+          rightBracket.style.height = `${height}px`;
+          rightBracket.style.width = "15px"; // Width of the horizontal lines
+
+          bracketsContainer.appendChild(rightBracket);
+        }
+        }
       }
     });
   }
