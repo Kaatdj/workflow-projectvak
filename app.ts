@@ -5,13 +5,16 @@ window.addEventListener("DOMContentLoaded", () => {
   const popup = document.getElementById("popup");
   const titleInput = document.getElementById("popupTitleInput") as HTMLInputElement | null;
   const descInput = document.getElementById("popupDesc") as HTMLTextAreaElement | null;
+  const memberInput = document.getElementById("popupMember") as HTMLSelectElement | null;
+  const dueDateInput = document.getElementById("popupDueDate") as HTMLInputElement | null;
+  const typeInput = document.getElementById("popupType") as HTMLSelectElement | null;
   const savePopup = document.getElementById("savePopup");
   const canvas = document.getElementById("canvas");
   const editBtn = document.getElementById("editBtn");
   const sidebar = document.getElementById("sidebar");
   const closeSidebar = document.getElementById("closeSidebar");
 
-  if (!popup || !titleInput || !descInput || !savePopup || !canvas || !editBtn || !sidebar || !closeSidebar) {
+  if (!popup || !titleInput || !descInput || !memberInput || !dueDateInput || !typeInput || !savePopup || !canvas || !editBtn || !sidebar || !closeSidebar) {
     console.error("One or more required elements are missing from the DOM.");
     return;
   }
@@ -43,16 +46,49 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // Save block content from popup
   savePopup.addEventListener("click", () => {
-    if (currentBlock && titleInput && descInput) {
+    if (currentBlock && titleInput && descInput && memberInput && dueDateInput && typeInput) {
       const title = titleInput.value.trim();
       const desc = descInput.value.trim();
+      const member = memberInput.value;
+      const dueDate = dueDateInput.value.trim();
+      const type = typeInput.value;
 
       currentBlock.innerText = title || "Naamloos blok";
       currentBlock.setAttribute("title", desc);
 
+      // Get the column ID where the block is placed
+      const column = currentBlock.parentElement;
+      const columnId = column?.getAttribute("data-column-id");
+
+      // Prepare block data
+      const blockData = {
+        status: "unavailable", // Default status
+        title: title || "Naamloos blok",
+        description: desc,
+        member: member,
+        dueDate: dueDate,
+        type: type,
+        columnId: columnId || null, // Column ID or null if not found
+      };
+
+      // Log the block data to the console
+      console.log("Block data saved:", blockData);
+
+      // Send block data to Bubble
+      window.postMessage(
+        {
+          type: "saveBlock",
+          data: blockData,
+        },
+        "*"
+      );
+
       // Reset popup fields
       titleInput.value = "";
       descInput.value = "";
+      memberInput.value = "";
+      dueDateInput.value = "";
+      typeInput.value = "";
 
       // Hide the popup
       popup.classList.add("hidden");
@@ -69,6 +105,9 @@ window.addEventListener("DOMContentLoaded", () => {
       // Reset popup fields
       titleInput.value = "";
       descInput.value = "";
+      memberInput.value = "";
+      dueDateInput.value = "";
+      typeInput.value = "";
 
       // Hide the popup
       popup.classList.add("hidden");
@@ -80,6 +119,7 @@ window.addEventListener("DOMContentLoaded", () => {
   function createColumn(parent: HTMLElement, isStartColumn = false) {
     const col = document.createElement("div");
     col.classList.add("column");
+    col.setAttribute("data-column-id", generateUniqueId()); // Assign a unique ID to the column
 
     if (isStartColumn) {
       // Add the "start" block to the first column
@@ -265,3 +305,7 @@ function updateBrackets() {
 // Call this function whenever blocks are added, removed, or moved
 updateBrackets();
 })
+
+function generateUniqueId(): string {
+  return Math.random().toString(36).substr(2, 9);
+}

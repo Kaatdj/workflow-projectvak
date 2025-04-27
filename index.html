@@ -14,7 +14,7 @@
 
   <div class="wrapper">
     <div id="canvas" class="canvas">
-      <div id="brackets" class="brackets"></div> <!-- Container for brackets -->
+      <div id="brackets" class="brackets"></div> 
     </div>
 
     <div id="sidebar" class="sidebar hidden">
@@ -37,12 +37,19 @@
     <div class="popup-content">
       <h2 id="popupTitle">New Task</h2>
       <input type="text" id="popupTitleInput" placeholder="Task Title"/>
-      <select id="popupType" placeholder="Select Members">
+      <select id="popupMember">
+        <option value="" disabled selected>Select Members</option>
         <option value="type1">Member 1</option>
         <option value="type2">Member 2</option>
         <option value="type3">Member 3</option>
       </select>
       <textarea id="popupDesc" placeholder="Task Description"></textarea>
+      <select id="popupType">
+        <option value="" disabled selected>Select Type of Task</option>
+        <option value="typeApproval">Approval</option>
+        <option value="typeAccept">Accept</option>
+        <option value="typeSubmit">Submit</option>
+      </select>
       <input type="text" id="popupDueDate" placeholder="Due Date"/>
       <button id="savePopup">Opslaan</button>
     </div>

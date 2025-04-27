@@ -4,12 +4,15 @@ window.addEventListener("DOMContentLoaded", function () {
     var popup = document.getElementById("popup");
     var titleInput = document.getElementById("popupTitleInput");
     var descInput = document.getElementById("popupDesc");
+    var memberInput = document.getElementById("popupMember");
+    var dueDateInput = document.getElementById("popupDueDate");
+    var typeInput = document.getElementById("popupType");
     var savePopup = document.getElementById("savePopup");
     var canvas = document.getElementById("canvas");
     var editBtn = document.getElementById("editBtn");
     var sidebar = document.getElementById("sidebar");
     var closeSidebar = document.getElementById("closeSidebar");
-    if (!popup || !titleInput || !descInput || !savePopup || !canvas || !editBtn || !sidebar || !closeSidebar) {
+    if (!popup || !titleInput || !descInput || !memberInput || !dueDateInput || !typeInput || !savePopup || !canvas || !editBtn || !sidebar || !closeSidebar) {
         console.error("One or more required elements are missing from the DOM.");
         return;
     }
@@ -35,14 +38,40 @@ window.addEventListener("DOMContentLoaded", function () {
     });
     // Save block content from popup
     savePopup.addEventListener("click", function () {
-        if (currentBlock && titleInput && descInput) {
+        if (currentBlock && titleInput && descInput && memberInput && dueDateInput && typeInput) {
             var title = titleInput.value.trim();
             var desc = descInput.value.trim();
+            var member = memberInput.value;
+            var dueDate = dueDateInput.value.trim();
+            var type = typeInput.value;
             currentBlock.innerText = title || "Naamloos blok";
             currentBlock.setAttribute("title", desc);
+            // Get the column ID where the block is placed
+            var column = currentBlock.parentElement;
+            var columnId = column === null || column === void 0 ? void 0 : column.getAttribute("data-column-id");
+            // Prepare block data
+            var blockData = {
+                status: "unavailable", // Default status
+                title: title || "Naamloos blok",
+                description: desc,
+                member: member,
+                dueDate: dueDate,
+                type: type,
+                columnId: columnId || null, // Column ID or null if not found
+            };
+            // Log the block data to the console
+            console.log("Block data saved:", blockData);
+            // Send block data to Bubble
+            window.postMessage({
+                type: "saveBlock",
+                data: blockData,
+            }, "*");
             // Reset popup fields
             titleInput.value = "";
             descInput.value = "";
+            memberInput.value = "";
+            dueDateInput.value = "";
+            typeInput.value = "";
             // Hide the popup
             popup.classList.add("hidden");
             currentBlock = null;
@@ -56,6 +85,9 @@ window.addEventListener("DOMContentLoaded", function () {
             // Reset popup fields
             titleInput.value = "";
             descInput.value = "";
+            memberInput.value = "";
+            dueDateInput.value = "";
+            typeInput.value = "";
             // Hide the popup
             popup.classList.add("hidden");
             currentBlock = null;
@@ -66,6 +98,7 @@ window.addEventListener("DOMContentLoaded", function () {
         if (isStartColumn === void 0) { isStartColumn = false; }
         var col = document.createElement("div");
         col.classList.add("column");
+        col.setAttribute("data-column-id", generateUniqueId()); // Assign a unique ID to the column
         if (isStartColumn) {
             // Add the "start" block to the first column
             var startBlock = document.createElement("div");
@@ -217,3 +250,6 @@ window.addEventListener("DOMContentLoaded", function () {
     // Call this function whenever blocks are added, removed, or moved
     updateBrackets();
 });
+function generateUniqueId() {
+    return Math.random().toString(36).substr(2, 9);
+}
