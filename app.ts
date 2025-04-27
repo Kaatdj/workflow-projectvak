@@ -80,7 +80,7 @@ window.addEventListener("DOMContentLoaded", () => {
           type: "saveBlock",
           data: blockData,
         },
-        "*"
+        "https://valcori-99218.bubbleapps.io/version-test"
       );
 
       // Reset popup fields
