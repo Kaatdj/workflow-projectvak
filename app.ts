@@ -75,13 +75,28 @@ window.addEventListener("DOMContentLoaded", () => {
       console.log("Block data saved:", blockData);
 
       // Send block data to Bubble
-      window.postMessage(
+      window.addEventListener("load", function () {
+        const iframe = document.querySelector("iframe");
+        if (iframe) {
+          // Send the message to the parent when the iframe is loaded
+          if (iframe.contentWindow) {
+            iframe.contentWindow.postMessage(
+              { type: "saveBlock", data: blockData },
+              "*"  // "*" allows communication from any origin
+            );
+          } else {
+            console.error("iframe.contentWindow is null.");
+          }
+        }
+      });
+      
+    /*  window.postMessage(
         {
           type: "saveBlock",
           data: blockData,
         },
         "https://valcori-99218.bubbleapps.io/version-test"
-      );
+      );*/
 
       // Reset popup fields
       titleInput.value = "";
