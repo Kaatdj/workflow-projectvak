@@ -77,7 +77,11 @@ window.addEventListener("DOMContentLoaded", () => {
       // Send block data to Bubble
       window.addEventListener("load", function () {
         const iframe = document.querySelector("iframe");
+        console.error("load okay");
+
         if (iframe) {
+          console.error("iframe okay");
+
           // Send the message to the parent when the iframe is loaded
           if (iframe.contentWindow) {
             iframe.contentWindow.postMessage(
