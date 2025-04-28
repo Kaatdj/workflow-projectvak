@@ -75,7 +75,7 @@ window.addEventListener("DOMContentLoaded", () => {
       console.log("Block data saved:", blockData);
 
       // Send block data to Bubble
-      window.addEventListener("load", function () {
+     /* window.addEventListener("load", function () {
         const iframe = document.querySelector("iframe");
         console.error("load okay");
 
@@ -92,15 +92,15 @@ window.addEventListener("DOMContentLoaded", () => {
             console.error("iframe.contentWindow is null.");
           }
         }
-      });
+      }); */
       
-    /*  window.postMessage(
-        {
-          type: "saveBlock",
-          data: blockData,
-        },
-        "https://valcori-99218.bubbleapps.io/version-test"
-      );*/
+    window.parent.postMessage(
+      {
+        type: "saveBlock",
+        data: blockData,
+      },
+      "https://valcori-99218.bubbleapps.io/version-test"
+    );
 
       // Reset popup fields
       titleInput.value = "";
