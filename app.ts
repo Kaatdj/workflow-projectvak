@@ -93,8 +93,11 @@ window.addEventListener("DOMContentLoaded", () => {
           }
         }
       }); */
-      
+      console.log("Sending block data to parent...");
+
       setTimeout(() => {
+        console.log("timeout");
+
         window.parent.postMessage({ type: "saveBlock", data: blockData }, "https://valcori-99218.bubbleapps.io/version-test");
       }, 1000); // 1 second delay
       
