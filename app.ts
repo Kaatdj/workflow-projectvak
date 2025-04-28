@@ -94,13 +94,10 @@ window.addEventListener("DOMContentLoaded", () => {
         }
       }); */
       
-    window.parent.postMessage(
-      {
-        type: "saveBlock",
-        data: blockData,
-      },
-      "https://valcori-99218.bubbleapps.io/version-test"
-    );
+      setTimeout(() => {
+        window.parent.postMessage({ type: "saveBlock", data: blockData }, "https://valcori-99218.bubbleapps.io/version-test");
+      }, 1000); // 1 second delay
+      
 
       // Reset popup fields
       titleInput.value = "";

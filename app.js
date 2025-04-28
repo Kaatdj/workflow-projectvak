@@ -50,7 +50,7 @@ window.addEventListener("DOMContentLoaded", function () {
             var column = currentBlock.parentElement;
             var columnId = column === null || column === void 0 ? void 0 : column.getAttribute("data-column-id");
             // Prepare block data
-            var blockData = {
+            var blockData_1 = {
                 status: "unavailable", // Default status
                 title: title || "Naamloos blok",
                 description: desc,
@@ -60,7 +60,7 @@ window.addEventListener("DOMContentLoaded", function () {
                 columnId: columnId || null, // Column ID or null if not found
             };
             // Log the block data to the console
-            console.log("Block data saved:", blockData);
+            console.log("Block data saved:", blockData_1);
             // Send block data to Bubble
             /* window.addEventListener("load", function () {
                const iframe = document.querySelector("iframe");
@@ -80,10 +80,9 @@ window.addEventListener("DOMContentLoaded", function () {
                  }
                }
              }); */
-            window.parent.postMessage({
-                type: "saveBlock",
-                data: blockData,
-            }, "https://valcori-99218.bubbleapps.io/version-test");
+            setTimeout(function () {
+                window.parent.postMessage({ type: "saveBlock", data: blockData_1 }, "https://valcori-99218.bubbleapps.io/version-test");
+            }, 1000); // 1 second delay
             // Reset popup fields
             titleInput.value = "";
             descInput.value = "";
