@@ -272,3 +272,32 @@ window.addEventListener("DOMContentLoaded", function () {
 function generateUniqueId() {
     return Math.random().toString(36).substr(2, 9);
 }
+// ✅ Receive block data from parent Bubble page
+window.addEventListener("message", function (event) {
+    if (event.data.type === "loadBlocks") {
+        var blocks = event.data.data;
+        console.log("Loading blocks into workflow:", blocks);
+        renderBlocks(blocks);
+    }
+});
+// ✅ Function to render blocks from database
+function renderBlocks(blocks) {
+    var canvas = document.getElementById("canvas");
+    blocks.forEach(function (block) {
+        // Try to find an existing column for this block
+        var column = canvas.querySelector("[data-column-id=\"".concat(block.columnId, "\"]"));
+        // If column doesn't exist yet, create it
+        if (!column) {
+            column = document.createElement("div");
+            column.classList.add("column");
+            column.setAttribute("data-column-id", block.columnId);
+            canvas.appendChild(column);
+        }
+        // Create block
+        var el = document.createElement("div");
+        el.classList.add("block");
+        el.innerText = block.title || "Naamloos blok";
+        el.setAttribute("title", block.description || "");
+        column.appendChild(el);
+    });
+}
