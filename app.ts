@@ -360,7 +360,7 @@ function renderBlocks(blocks) {
         return;
     }
 
-    blocks.forEach(block => {
+    blocks.forEach((block) => {
         console.log("Rendering block:", block);
 
         // Try to find an existing column for this block
@@ -384,8 +384,9 @@ function renderBlocks(blocks) {
         el.setAttribute("title", block.description || "");
 
         // Ensure the block's columnId matches the column's data-column-id
-        block.columnId = column.getAttribute("data-column-id") || "";
-        console.log(`Block "${block.title}" assigned to column "${block.columnId}".`);
+        const columnId = column.getAttribute("data-column-id") || "";
+        el.setAttribute("data-column-id", columnId); // Set the column ID on the block element
+        console.log(`Block "${block.title}" assigned to column "${columnId}".`);
 
         column.appendChild(el); // Append the block to the column
     });

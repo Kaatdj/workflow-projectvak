@@ -317,8 +317,9 @@ function renderBlocks(blocks) {
         el.innerText = block.title || "Naamloos blok";
         el.setAttribute("title", block.description || "");
         // Ensure the block's columnId matches the column's data-column-id
-        block.columnId = column.getAttribute("data-column-id") || "";
-        console.log("Block \"".concat(block.title, "\" assigned to column \"").concat(block.columnId, "\"."));
+        var columnId = column.getAttribute("data-column-id") || "";
+        el.setAttribute("data-column-id", columnId); // Set the column ID on the block element
+        console.log("Block \"".concat(block.title, "\" assigned to column \"").concat(columnId, "\"."));
         column.appendChild(el); // Append the block to the column
     });
 }
