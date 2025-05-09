@@ -284,11 +284,16 @@ window.addEventListener("message", function (event) {
 // ✅ Function to render blocks from database
 function renderBlocks(blocks) {
     var canvas = document.getElementById("canvas");
+    if (!canvas) {
+        console.error("Canvas element not found!");
+        return;
+    }
     blocks.forEach(function (block) {
+        console.log("Rendering block:", block);
         // Try to find an existing column for this block
         var column = canvas.querySelector("[data-column-id=\"".concat(block.columnId, "\"]"));
-        // If column doesn't exist yet, create it
         if (!column) {
+            console.log("Column with ID ".concat(block.columnId, " not found. Creating a new column."));
             column = document.createElement("div");
             column.classList.add("column");
             column.setAttribute("data-column-id", block.columnId);
@@ -299,6 +304,7 @@ function renderBlocks(blocks) {
         el.classList.add("block");
         el.innerText = block.title || "Naamloos blok";
         el.setAttribute("title", block.description || "");
-        column.appendChild(el);
+        column.appendChild(el); // Append the block to the column
+        console.log("Block \"".concat(block.title, "\" added to column \"").concat(block.columnId, "\"."));
     });
 }
