@@ -344,7 +344,7 @@ function generateUniqueId(): string {
 
 // ✅ Receive block data from parent Bubble page
 window.addEventListener("message", function(event) {
-  console.log("Received message from parent:", event.data);
+  console.log("**Received message from parent:", event.data);
     if (event.data.type === "loadBlocks") {
         const blocks = event.data.data;
         console.log("Loading blocks into workflow:", blocks);
