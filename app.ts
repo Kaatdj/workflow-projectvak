@@ -1,6 +1,9 @@
 let draggedBlock: HTMLElement | null = null;
 let currentBlock: HTMLElement | null = null;
 
+// Global counter for column IDs
+let columnCounter = 1;
+
 window.addEventListener("DOMContentLoaded", () => {
   const popup = document.getElementById("popup");
   const titleInput = document.getElementById("popupTitleInput") as HTMLInputElement | null;
@@ -138,7 +141,10 @@ window.addEventListener("DOMContentLoaded", () => {
   function createColumn(parent: HTMLElement, isStartColumn = false) {
     const col = document.createElement("div");
     col.classList.add("column");
-    col.setAttribute("data-column-id", generateUniqueId()); // Assign a unique ID to the column
+
+    // Assign a sequential column ID
+    const columnId = isStartColumn ? "start" : `col${columnCounter++}`;
+    col.setAttribute("data-column-id", columnId);
 
     if (isStartColumn) {
       // Add the "start" block to the first column
@@ -179,6 +185,13 @@ window.addEventListener("DOMContentLoaded", () => {
         clone.style.cursor = "default";
 
         currentBlock = clone;
+
+        // Ensure the block's columnId matches the column's data-column-id
+        const columnId = col.getAttribute("data-column-id");
+        if (columnId) {
+          clone.setAttribute("data-column-id", columnId);
+          console.log(`Block added to column "${columnId}".`);
+        }
 
         col.appendChild(clone);
 
@@ -356,7 +369,11 @@ function renderBlocks(blocks) {
             console.log(`Column with ID ${block.columnId} not found. Creating a new column.`);
             column = document.createElement("div");
             column.classList.add("column");
-            column.setAttribute("data-column-id", block.columnId);
+
+            // Assign a sequential column ID
+            const newColumnId = `col${columnCounter++}`;
+            column.setAttribute("data-column-id", newColumnId);
+
             canvas.appendChild(column);
         }
 
@@ -365,9 +382,11 @@ function renderBlocks(blocks) {
         el.classList.add("block");
         el.innerText = block.title || "Naamloos blok";
         el.setAttribute("title", block.description || "");
+
+        // Ensure the block's columnId matches the column's data-column-id
+        block.columnId = column.getAttribute("data-column-id") || "";
+        console.log(`Block "${block.title}" assigned to column "${block.columnId}".`);
+
         column.appendChild(el); // Append the block to the column
-        console.log(`Block "${block.title}" added to column "${block.columnId}".`);
     });
-
-
 }

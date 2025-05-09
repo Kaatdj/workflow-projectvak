@@ -1,5 +1,7 @@
 var draggedBlock = null;
 var currentBlock = null;
+// Global counter for column IDs
+var columnCounter = 1;
 window.addEventListener("DOMContentLoaded", function () {
     var popup = document.getElementById("popup");
     var titleInput = document.getElementById("popupTitleInput");
@@ -117,7 +119,9 @@ window.addEventListener("DOMContentLoaded", function () {
         if (isStartColumn === void 0) { isStartColumn = false; }
         var col = document.createElement("div");
         col.classList.add("column");
-        col.setAttribute("data-column-id", generateUniqueId()); // Assign a unique ID to the column
+        // Assign a sequential column ID
+        var columnId = isStartColumn ? "start" : "col".concat(columnCounter++);
+        col.setAttribute("data-column-id", columnId);
         if (isStartColumn) {
             // Add the "start" block to the first column
             var startBlock = document.createElement("div");
@@ -149,6 +153,12 @@ window.addEventListener("DOMContentLoaded", function () {
                 clone.classList.remove("draggable");
                 clone.style.cursor = "default";
                 currentBlock = clone;
+                // Ensure the block's columnId matches the column's data-column-id
+                var columnId_1 = col.getAttribute("data-column-id");
+                if (columnId_1) {
+                    clone.setAttribute("data-column-id", columnId_1);
+                    console.log("Block added to column \"".concat(columnId_1, "\"."));
+                }
                 col.appendChild(clone);
                 // Show the popup to fill in block details
                 if (popup) {
@@ -296,7 +306,9 @@ function renderBlocks(blocks) {
             console.log("Column with ID ".concat(block.columnId, " not found. Creating a new column."));
             column = document.createElement("div");
             column.classList.add("column");
-            column.setAttribute("data-column-id", block.columnId);
+            // Assign a sequential column ID
+            var newColumnId = "col".concat(columnCounter++);
+            column.setAttribute("data-column-id", newColumnId);
             canvas.appendChild(column);
         }
         // Create block
@@ -304,7 +316,9 @@ function renderBlocks(blocks) {
         el.classList.add("block");
         el.innerText = block.title || "Naamloos blok";
         el.setAttribute("title", block.description || "");
+        // Ensure the block's columnId matches the column's data-column-id
+        block.columnId = column.getAttribute("data-column-id") || "";
+        console.log("Block \"".concat(block.title, "\" assigned to column \"").concat(block.columnId, "\"."));
         column.appendChild(el); // Append the block to the column
-        console.log("Block \"".concat(block.title, "\" added to column \"").concat(block.columnId, "\"."));
     });
 }
