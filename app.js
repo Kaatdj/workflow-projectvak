@@ -1,7 +1,7 @@
 var draggedBlock = null;
 var currentBlock = null;
 // Global counter for column IDs
-var columnCounter = 1;
+var columnCounter = 0;
 window.addEventListener("DOMContentLoaded", function () {
     var popup = document.getElementById("popup");
     var titleInput = document.getElementById("popupTitleInput");
@@ -63,25 +63,6 @@ window.addEventListener("DOMContentLoaded", function () {
             };
             // Log the block data to the console
             console.log("Block data saved:", blockData_1);
-            // Send block data to Bubble
-            /* window.addEventListener("load", function () {
-               const iframe = document.querySelector("iframe");
-               console.error("load okay");
-       
-               if (iframe) {
-                 console.error("iframe okay");
-       
-                 // Send the message to the parent when the iframe is loaded
-                 if (iframe.contentWindow) {
-                   iframe.contentWindow.postMessage(
-                     { type: "saveBlock", data: blockData },
-                     "*"  // "*" allows communication from any origin
-                   );
-                 } else {
-                   console.error("iframe.contentWindow is null.");
-                 }
-               }
-             }); */
             console.log("Sending block data to parent...");
             setTimeout(function () {
                 console.log("timeout");

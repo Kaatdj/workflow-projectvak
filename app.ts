@@ -2,7 +2,7 @@ let draggedBlock: HTMLElement | null = null;
 let currentBlock: HTMLElement | null = null;
 
 // Global counter for column IDs
-let columnCounter = 1;
+let columnCounter = 0;
 
 window.addEventListener("DOMContentLoaded", () => {
   const popup = document.getElementById("popup");
@@ -76,31 +76,10 @@ window.addEventListener("DOMContentLoaded", () => {
 
       // Log the block data to the console
       console.log("Block data saved:", blockData);
-
-      // Send block data to Bubble
-     /* window.addEventListener("load", function () {
-        const iframe = document.querySelector("iframe");
-        console.error("load okay");
-
-        if (iframe) {
-          console.error("iframe okay");
-
-          // Send the message to the parent when the iframe is loaded
-          if (iframe.contentWindow) {
-            iframe.contentWindow.postMessage(
-              { type: "saveBlock", data: blockData },
-              "*"  // "*" allows communication from any origin
-            );
-          } else {
-            console.error("iframe.contentWindow is null.");
-          }
-        }
-      }); */
       console.log("Sending block data to parent...");
 
       setTimeout(() => {
         console.log("timeout");
-
         window.parent.postMessage({ type: "saveBlock", data: blockData }, "https://valcori-99218.bubbleapps.io/version-test");
       }, 1000); // 1 second delay
       
