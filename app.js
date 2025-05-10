@@ -331,37 +331,43 @@ function renderBlocks(blocks) {
         // Handle "Approve" button for typeApproval blocks
         if (block.type === "typeApproval" && approveButton) {
             approveButton.classList.remove("hidden");
-            approveButton.textContent = "Approve";
-            // Add click event listener to the button
-            approveButton.addEventListener("click", function () {
-                block.status = "done"; // Update the block's status locally
+            if (block.status === "done") {
                 approveButton.textContent = "Approved"; // Change button text
                 approveButton.disabled = true; // Disable the button
-                // Update the circle's color
-                if (statusCircle) {
-                    statusCircle.classList.remove("status-unavailable", "status-busy");
-                    statusCircle.classList.add("status-done");
-                }
-                // Send the updated block to the Bubble database
-                window.parent.postMessage({ type: "saveBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
-                console.log("Block \"".concat(block.title, "\" approved."));
-            });
+            }
+            else {
+                approveButton.textContent = "Approve";
+                // Add click event listener to the button
+                approveButton.addEventListener("click", function () {
+                    block.status = "done"; // Update the block's status locally
+                    approveButton.textContent = "Approved"; // Change button text
+                    approveButton.disabled = true; // Disable the button
+                    // Update the circle's color
+                    if (statusCircle) {
+                        statusCircle.classList.remove("status-unavailable", "status-busy");
+                        statusCircle.classList.add("status-done");
+                    }
+                    // Send the updated block to the Bubble database
+                    window.parent.postMessage({ type: "saveBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
+                    console.log("Block \"".concat(block.title, "\" approved."));
+                });
+            }
+            // Add click event listener to the block for editing
+            var blockDiv = blockElement.querySelector(".block");
+            if (blockDiv) {
+                blockDiv.setAttribute("data-column-id", column.getAttribute("data-column-id") || "");
+                blockDiv.setAttribute("data-title", block.title || "Naamloos blok");
+                blockDiv.setAttribute("data-description", block.description || "");
+                blockDiv.setAttribute("data-member", block.member || "");
+                blockDiv.setAttribute("data-due-date", block.dueDate || "");
+                blockDiv.setAttribute("data-type", block.type || "");
+                blockDiv.addEventListener("click", function () {
+                    openEditPopup(block); // Open the popup to edit the block
+                });
+            }
+            console.log("Block \"".concat(block.title, "\" assigned to column \"").concat(column.getAttribute("data-column-id"), "\"."));
+            column.appendChild(blockElement); // Append the block to the column
         }
-        // Add click event listener to the block for editing
-        var blockDiv = blockElement.querySelector(".block");
-        if (blockDiv) {
-            blockDiv.setAttribute("data-column-id", column.getAttribute("data-column-id") || "");
-            blockDiv.setAttribute("data-title", block.title || "Naamloos blok");
-            blockDiv.setAttribute("data-description", block.description || "");
-            blockDiv.setAttribute("data-member", block.member || "");
-            blockDiv.setAttribute("data-due-date", block.dueDate || "");
-            blockDiv.setAttribute("data-type", block.type || "");
-            blockDiv.addEventListener("click", function () {
-                openEditPopup(block); // Open the popup to edit the block
-            });
-        }
-        console.log("Block \"".concat(block.title, "\" assigned to column \"").concat(column.getAttribute("data-column-id"), "\"."));
-        column.appendChild(blockElement); // Append the block to the column
     });
 }
 // Function to open the popup and populate it with block data

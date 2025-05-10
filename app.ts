@@ -394,7 +394,11 @@ function renderBlocks(blocks) {
         // Handle "Approve" button for typeApproval blocks
         if (block.type === "typeApproval" && approveButton) {
             approveButton.classList.remove("hidden");
-            approveButton.textContent = "Approve";
+            if (block.status === "done") {
+                approveButton.textContent = "Approved"; // Change button text
+                approveButton.disabled = true; // Disable the button
+            } else {
+                approveButton.textContent = "Approve";
 
             // Add click event listener to the button
             approveButton.addEventListener("click", () => {
