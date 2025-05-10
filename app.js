@@ -280,8 +280,9 @@ function renderBlocks(blocks) {
         console.error("Block template not found!");
         return;
     }
-    // Clear the canvas to avoid duplicate blocks
-    canvas.innerHTML = "";
+    // Remove only dynamic blocks
+    var dynamicBlocks = canvas.querySelectorAll(".dynamic-block");
+    dynamicBlocks.forEach(function (block) { return block.remove(); });
     blocks.forEach(function (block) {
         console.log("Rendering block:", block);
         // Try to find an existing column for this block
@@ -356,6 +357,7 @@ function renderBlocks(blocks) {
         // Add click event listener to the block for editing
         var blockDiv = blockElement.querySelector(".block");
         if (blockDiv) {
+            blockDiv.classList.add("dynamic-block"); // Mark as dynamic
             blockDiv.setAttribute("data-column-id", column.getAttribute("data-column-id") || "");
             blockDiv.setAttribute("data-title", block.title || "Naamloos blok");
             blockDiv.setAttribute("data-description", block.description || "");
