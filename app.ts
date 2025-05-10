@@ -345,6 +345,9 @@ function renderBlocks(blocks) {
         return;
     }
 
+    // Clear the canvas to avoid duplicate blocks
+    canvas.innerHTML = "";
+
     blocks.forEach((block) => {
         console.log("Rendering block:", block);
 
@@ -402,7 +405,8 @@ function renderBlocks(blocks) {
             }
 
             // Add click event listener to the button
-            approveButton.addEventListener("click", () => {
+            approveButton.addEventListener("click", (event) => {
+                event.stopPropagation(); // Prevent the click from propagating to the block
                 block.status = "done"; // Update the block's status locally
                 approveButton.textContent = "Approved"; // Change button text
                 approveButton.disabled = true; // Disable the button

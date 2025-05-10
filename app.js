@@ -283,6 +283,8 @@ function renderBlocks(blocks) {
         console.error("Block template not found!");
         return;
     }
+    // Clear the canvas to avoid duplicate blocks
+    canvas.innerHTML = "";
     blocks.forEach(function (block) {
         console.log("Rendering block:", block);
         // Try to find an existing column for this block
@@ -339,7 +341,8 @@ function renderBlocks(blocks) {
                 approveButton.textContent = "Approve";
             }
             // Add click event listener to the button
-            approveButton.addEventListener("click", function () {
+            approveButton.addEventListener("click", function (event) {
+                event.stopPropagation(); // Prevent the click from propagating to the block
                 block.status = "done"; // Update the block's status locally
                 approveButton.textContent = "Approved"; // Change button text
                 approveButton.disabled = true; // Disable the button
