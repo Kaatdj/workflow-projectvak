@@ -341,14 +341,45 @@ function renderBlocks(blocks) {
         return;
     }
 
-    // Remove only dynamic blocks
-    const dynamicBlocks = canvas.querySelectorAll(".dynamic-block");
-    dynamicBlocks.forEach((block) => block.remove());
-
     blocks.forEach((block) => {
         console.log("Rendering block:", block);
 
-        // Try to find an existing column for this block
+        // Check if the block already exists in the DOM
+        let existingBlock = canvas.querySelector(`.block[data-id="${block.id}"]`);
+        if (existingBlock) {
+            console.log(`Block with ID ${block.id} already exists. Updating...`);
+
+            // Update the existing block's content
+            const titleElement = existingBlock.querySelector(".block-title");
+            const descriptionElement = existingBlock.querySelector(".block-description");
+            const memberElement = existingBlock.querySelector(".block-member");
+            const dueDateElement = existingBlock.querySelector(".block-due-date");
+            const typeElement = existingBlock.querySelector(".block-type");
+            const statusCircle = existingBlock.querySelector(".status-circle");
+
+            if (titleElement) titleElement.textContent = block.title || "Naamloos blok";
+            if (descriptionElement) descriptionElement.textContent = block.description || "No description";
+            if (memberElement) memberElement.textContent = `Assigned to: ${block.member || "None"}`;
+            if (dueDateElement) dueDateElement.textContent = `Due: ${block.dueDate || "No due date"}`;
+            if (typeElement) typeElement.textContent = `Type: ${block.type || "No type"}`;
+
+            // Update the status circle
+            if (statusCircle) {
+                statusCircle.classList.remove("status-unavailable", "status-busy", "status-done");
+
+                if (block.status === "done") {
+                    statusCircle.classList.add("status-done");
+                } else if (block.status === "busy") {
+                    statusCircle.classList.add("status-busy");
+                } else {
+                    statusCircle.classList.add("status-unavailable");
+                }
+            }
+
+            return; // Skip creating a new block
+        }
+
+        // If the block does not exist, create a new one
         let column = canvas.querySelector(`[data-column-id="${block.columnId}"]`);
         if (!column) {
             console.log(`Column with ID ${block.columnId} not found. Creating a new column.`);
@@ -424,7 +455,7 @@ function renderBlocks(blocks) {
         // Add click event listener to the block for editing
         const blockDiv = blockElement.querySelector(".block") as HTMLElement;
         if (blockDiv) {
-            blockDiv.classList.add("dynamic-block"); // Mark as dynamic
+            blockDiv.setAttribute("data-id", block.id); // Add a unique identifier
             blockDiv.setAttribute("data-column-id", column.getAttribute("data-column-id") || "");
             blockDiv.setAttribute("data-title", block.title || "Naamloos blok");
             blockDiv.setAttribute("data-description", block.description || "");

@@ -280,12 +280,45 @@ function renderBlocks(blocks) {
         console.error("Block template not found!");
         return;
     }
-    // Remove only dynamic blocks
-    var dynamicBlocks = canvas.querySelectorAll(".dynamic-block");
-    dynamicBlocks.forEach(function (block) { return block.remove(); });
     blocks.forEach(function (block) {
         console.log("Rendering block:", block);
-        // Try to find an existing column for this block
+        // Check if the block already exists in the DOM
+        var existingBlock = canvas.querySelector(".block[data-id=\"".concat(block.id, "\"]"));
+        if (existingBlock) {
+            console.log("Block with ID ".concat(block.id, " already exists. Updating..."));
+            // Update the existing block's content
+            var titleElement_1 = existingBlock.querySelector(".block-title");
+            var descriptionElement_1 = existingBlock.querySelector(".block-description");
+            var memberElement_1 = existingBlock.querySelector(".block-member");
+            var dueDateElement_1 = existingBlock.querySelector(".block-due-date");
+            var typeElement_1 = existingBlock.querySelector(".block-type");
+            var statusCircle_1 = existingBlock.querySelector(".status-circle");
+            if (titleElement_1)
+                titleElement_1.textContent = block.title || "Naamloos blok";
+            if (descriptionElement_1)
+                descriptionElement_1.textContent = block.description || "No description";
+            if (memberElement_1)
+                memberElement_1.textContent = "Assigned to: ".concat(block.member || "None");
+            if (dueDateElement_1)
+                dueDateElement_1.textContent = "Due: ".concat(block.dueDate || "No due date");
+            if (typeElement_1)
+                typeElement_1.textContent = "Type: ".concat(block.type || "No type");
+            // Update the status circle
+            if (statusCircle_1) {
+                statusCircle_1.classList.remove("status-unavailable", "status-busy", "status-done");
+                if (block.status === "done") {
+                    statusCircle_1.classList.add("status-done");
+                }
+                else if (block.status === "busy") {
+                    statusCircle_1.classList.add("status-busy");
+                }
+                else {
+                    statusCircle_1.classList.add("status-unavailable");
+                }
+            }
+            return; // Skip creating a new block
+        }
+        // If the block does not exist, create a new one
         var column = canvas.querySelector("[data-column-id=\"".concat(block.columnId, "\"]"));
         if (!column) {
             console.log("Column with ID ".concat(block.columnId, " not found. Creating a new column."));
@@ -357,7 +390,7 @@ function renderBlocks(blocks) {
         // Add click event listener to the block for editing
         var blockDiv = blockElement.querySelector(".block");
         if (blockDiv) {
-            blockDiv.classList.add("dynamic-block"); // Mark as dynamic
+            blockDiv.setAttribute("data-id", block.id); // Add a unique identifier
             blockDiv.setAttribute("data-column-id", column.getAttribute("data-column-id") || "");
             blockDiv.setAttribute("data-title", block.title || "Naamloos blok");
             blockDiv.setAttribute("data-description", block.description || "");
