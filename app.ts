@@ -399,6 +399,7 @@ function renderBlocks(blocks) {
                 approveButton.disabled = true; // Disable the button
             } else {
                 approveButton.textContent = "Approve";
+            }
 
             // Add click event listener to the button
             approveButton.addEventListener("click", () => {
