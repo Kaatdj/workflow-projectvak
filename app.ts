@@ -341,8 +341,9 @@ function renderBlocks(blocks) {
         return;
     }
 
-    // Clear the canvas to avoid duplicate blocks
-    canvas.innerHTML = "";
+    // Remove only dynamic blocks
+    const dynamicBlocks = canvas.querySelectorAll(".dynamic-block");
+    dynamicBlocks.forEach((block) => block.remove());
 
     blocks.forEach((block) => {
         console.log("Rendering block:", block);
@@ -423,6 +424,7 @@ function renderBlocks(blocks) {
         // Add click event listener to the block for editing
         const blockDiv = blockElement.querySelector(".block") as HTMLElement;
         if (blockDiv) {
+            blockDiv.classList.add("dynamic-block"); // Mark as dynamic
             blockDiv.setAttribute("data-column-id", column.getAttribute("data-column-id") || "");
             blockDiv.setAttribute("data-title", block.title || "Naamloos blok");
             blockDiv.setAttribute("data-description", block.description || "");
