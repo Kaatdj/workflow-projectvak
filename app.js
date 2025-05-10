@@ -305,6 +305,7 @@ function renderBlocks(blocks) {
         var dueDateElement = blockElement.querySelector(".block-due-date");
         var typeElement = blockElement.querySelector(".block-type");
         var approveButton = blockElement.querySelector(".approve-btn");
+        var statusCircle = blockElement.querySelector(".status-circle");
         if (titleElement)
             titleElement.textContent = block.title || "Naamloos blok";
         if (descriptionElement)
@@ -315,6 +316,18 @@ function renderBlocks(blocks) {
             dueDateElement.textContent = "Due: ".concat(block.dueDate || "No due date");
         if (typeElement)
             typeElement.textContent = "Type: ".concat(block.type || "No type");
+        // Set the initial status circle color for all blocks
+        if (statusCircle) {
+            if (block.status === "done") {
+                statusCircle.classList.add("status-done");
+            }
+            else if (block.status === "busy") {
+                statusCircle.classList.add("status-busy");
+            }
+            else {
+                statusCircle.classList.add("status-unavailable");
+            }
+        }
         // Handle "Approve" button for typeApproval blocks
         if (block.type === "typeApproval" && approveButton) {
             approveButton.classList.remove("hidden");

@@ -69,6 +69,32 @@ body {
   cursor: pointer;
   margin-bottom: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Added shadow */
+  position: relative;
+  padding-left: 20px; /* Add space for the circle */
+}
+
+/* Circle styles */
+.status-circle {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: grey; /* Default color */
+}
+
+/* Status colors */
+.status-unavailable {
+  background-color: grey;
+}
+
+.status-done {
+  background-color: green;
+}
+
+.status-busy {
+  background-color: yellow;
 }
 
 .add-task {
