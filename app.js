@@ -47,7 +47,6 @@ window.addEventListener("DOMContentLoaded", function () {
             var dueDate = dueDateInput.value.trim();
             var type = typeInput.value;
             currentBlock.innerText = title || "Naamloos blok";
-            currentBlock.setAttribute("title", desc);
             // Get the column ID where the block is placed
             var column = currentBlock.parentElement;
             var columnId = column === null || column === void 0 ? void 0 : column.getAttribute("data-column-id");
@@ -275,8 +274,13 @@ window.addEventListener("message", function (event) {
 // ✅ Function to render blocks from database
 function renderBlocks(blocks) {
     var canvas = document.getElementById("canvas");
+    var template = document.getElementById("block-template");
     if (!canvas) {
         console.error("Canvas element not found!");
+        return;
+    }
+    if (!template) {
+        console.error("Block template not found!");
         return;
     }
     blocks.forEach(function (block) {
@@ -292,15 +296,48 @@ function renderBlocks(blocks) {
             column.setAttribute("data-column-id", newColumnId);
             canvas.appendChild(column);
         }
-        // Create block
-        var el = document.createElement("div");
-        el.classList.add("block");
-        el.innerText = block.title || "Naamloos blok";
-        el.setAttribute("title", block.description || "");
-        // Ensure the block's columnId matches the column's data-column-id
-        var columnId = column.getAttribute("data-column-id") || "";
-        el.setAttribute("data-column-id", columnId); // Set the column ID on the block element
-        console.log("Block \"".concat(block.title, "\" assigned to column \"").concat(columnId, "\"."));
-        column.appendChild(el); // Append the block to the column
+        // Clone the block template
+        var blockElement = template.content.cloneNode(true);
+        // Populate the block with data
+        var titleElement = blockElement.querySelector(".block-title");
+        var descriptionElement = blockElement.querySelector(".block-description");
+        var memberElement = blockElement.querySelector(".block-member");
+        var dueDateElement = blockElement.querySelector(".block-due-date");
+        var typeElement = blockElement.querySelector(".block-type");
+        var approveButton = blockElement.querySelector(".approve-btn");
+        if (titleElement)
+            titleElement.textContent = block.title || "Naamloos blok";
+        if (descriptionElement)
+            descriptionElement.textContent = block.description || "No description";
+        if (memberElement)
+            memberElement.textContent = "Assigned to: ".concat(block.member || "None");
+        if (dueDateElement)
+            dueDateElement.textContent = "Due: ".concat(block.dueDate || "No due date");
+        if (typeElement)
+            typeElement.textContent = "Type: ".concat(block.type || "No type");
+        // Handle "Approve" button for typeApproval blocks
+        if (block.type === "typeApproval" && approveButton) {
+            approveButton.classList.remove("hidden");
+            approveButton.textContent = "Approve";
+            // Add click event listener to the button
+            approveButton.addEventListener("click", function () {
+                block.status = "done"; // Update the block's status
+                approveButton.textContent = "Approved"; // Change button text
+                approveButton.disabled = true; // Disable the button
+                console.log("Block \"".concat(block.title, "\" approved."));
+            });
+        }
+        // Set attributes for additional data
+        var blockDiv = blockElement.querySelector(".block");
+        if (blockDiv) {
+            blockDiv.setAttribute("data-column-id", column.getAttribute("data-column-id") || "");
+            blockDiv.setAttribute("data-title", block.title || "Naamloos blok");
+            blockDiv.setAttribute("data-description", block.description || "");
+            blockDiv.setAttribute("data-member", block.member || "");
+            blockDiv.setAttribute("data-due-date", block.dueDate || "");
+            blockDiv.setAttribute("data-type", block.type || "");
+        }
+        console.log("Block \"".concat(block.title, "\" assigned to column \"").concat(column.getAttribute("data-column-id"), "\"."));
+        column.appendChild(blockElement); // Append the block to the column
     });
 }
