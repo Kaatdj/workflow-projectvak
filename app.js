@@ -334,13 +334,20 @@ function renderBlocks(blocks) {
             approveButton.textContent = "Approve";
             // Add click event listener to the button
             approveButton.addEventListener("click", function () {
-                block.status = "done"; // Update the block's status
+                block.status = "done"; // Update the block's status locally
                 approveButton.textContent = "Approved"; // Change button text
                 approveButton.disabled = true; // Disable the button
+                // Update the circle's color
+                if (statusCircle) {
+                    statusCircle.classList.remove("status-unavailable", "status-busy");
+                    statusCircle.classList.add("status-done");
+                }
+                // Send the updated block to the Bubble database
+                window.parent.postMessage({ type: "saveBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
                 console.log("Block \"".concat(block.title, "\" approved."));
             });
         }
-        // Set attributes for additional data
+        // Add click event listener to the block for editing
         var blockDiv = blockElement.querySelector(".block");
         if (blockDiv) {
             blockDiv.setAttribute("data-column-id", column.getAttribute("data-column-id") || "");
@@ -349,8 +356,46 @@ function renderBlocks(blocks) {
             blockDiv.setAttribute("data-member", block.member || "");
             blockDiv.setAttribute("data-due-date", block.dueDate || "");
             blockDiv.setAttribute("data-type", block.type || "");
+            blockDiv.addEventListener("click", function () {
+                openEditPopup(block); // Open the popup to edit the block
+            });
         }
         console.log("Block \"".concat(block.title, "\" assigned to column \"").concat(column.getAttribute("data-column-id"), "\"."));
         column.appendChild(blockElement); // Append the block to the column
     });
+}
+// Function to open the popup and populate it with block data
+function openEditPopup(block) {
+    var popup = document.getElementById("popup");
+    var titleInput = document.getElementById("popupTitleInput");
+    var descInput = document.getElementById("popupDesc");
+    var memberInput = document.getElementById("popupMember");
+    var dueDateInput = document.getElementById("popupDueDate");
+    var typeInput = document.getElementById("popupType");
+    var savePopup = document.getElementById("savePopup");
+    if (!popup || !titleInput || !descInput || !memberInput || !dueDateInput || !typeInput || !savePopup) {
+        console.error("Popup or input elements not found!");
+        return;
+    }
+    // Populate the popup with the block's current data
+    titleInput.value = block.title || "";
+    descInput.value = block.description || "";
+    memberInput.value = block.member || "";
+    dueDateInput.value = block.dueDate || "";
+    typeInput.value = block.type || "";
+    // Show the popup
+    popup.classList.remove("hidden");
+    // Handle saving the updated block data
+    savePopup.onclick = function () {
+        block.title = titleInput.value.trim();
+        block.description = descInput.value.trim();
+        block.member = memberInput.value;
+        block.dueDate = dueDateInput.value.trim();
+        block.type = typeInput.value;
+        // Send the updated block to the Bubble database
+        window.parent.postMessage({ type: "saveBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
+        // Hide the popup
+        popup.classList.add("hidden");
+        console.log("Block \"".concat(block.title, "\" updated and saved."));
+    };
 }
