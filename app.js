@@ -259,12 +259,9 @@ window.addEventListener("DOMContentLoaded", function () {
     // Call this function whenever blocks are added, removed, or moved
     updateBrackets();
 });
-function generateUniqueId() {
-    return Math.random().toString(36).substr(2, 9);
-}
 // ✅ Receive block data from parent Bubble page
 window.addEventListener("message", function (event) {
-    console.log("***Received message from parent:", event.data);
+    console.log("**Received message from parent:", event.data);
     if (event.data.type === "loadBlocks") {
         var blocks = event.data.data;
         console.log("Loading blocks into workflow:", blocks);

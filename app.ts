@@ -316,13 +316,9 @@ function updateBrackets() {
 updateBrackets();
 })
 
-function generateUniqueId(): string {
-  return Math.random().toString(36).substr(2, 9);
-}
-
 // ✅ Receive block data from parent Bubble page
 window.addEventListener("message", function(event) {
-  console.log("***Received message from parent:", event.data);
+  console.log("**Received message from parent:", event.data);
     if (event.data.type === "loadBlocks") {
         const blocks = event.data.data;
         console.log("Loading blocks into workflow:", blocks);
