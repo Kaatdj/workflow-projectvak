@@ -281,6 +281,10 @@ function renderBlocks(blocks) {
         return;
     }
     blocks.forEach(function (block) {
+        // Generate a unique ID for the block if it doesn't already have one
+        if (!block.id) {
+            block.id = "".concat(block.columnId, "-").concat(block.title, "-").concat(Date.now());
+        }
         console.log("Rendering block:", block);
         // Check if the block already exists in the DOM
         var existingBlock = canvas.querySelector(".block[data-id=\"".concat(block.id, "\"]"));

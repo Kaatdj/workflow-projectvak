@@ -342,6 +342,11 @@ function renderBlocks(blocks) {
     }
 
     blocks.forEach((block) => {
+// Generate a unique ID for the block if it doesn't already have one
+        if (!block.id) {
+            block.id = `${block.columnId}-${block.title}-${Date.now()}`;
+        }
+
         console.log("Rendering block:", block);
 
         // Check if the block already exists in the DOM
