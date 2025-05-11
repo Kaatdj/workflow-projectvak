@@ -76,13 +76,8 @@ window.addEventListener("DOMContentLoaded", () => {
       // Log the block data to the console
       console.log("Block data saved:", blockData);
       console.log("Sending block data to parent...");
-
-      setTimeout(() => {
-        console.log("timeout");
-        window.parent.postMessage({ type: "saveBlock", data: blockData }, "https://valcori-99218.bubbleapps.io/version-test");
-      }, 1000); // 1 second delay
+      window.parent.postMessage({ type: "saveBlock", data: blockData }, "https://valcori-99218.bubbleapps.io/version-test");
       
-
       // Reset popup fields
       titleInput.value = "";
       descInput.value = "";
@@ -451,7 +446,7 @@ function renderBlocks(blocks) {
                 }
 
                 // Send the updated block to the Bubble database
-                window.parent.postMessage({ type: "saveBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
+                window.parent.postMessage({ type: "updateBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
 
                 console.log(`Block "${block.title}" approved.`);
             });
@@ -513,7 +508,7 @@ function openEditPopup(block) {
         block.type = typeInput.value;
 
         // Send the updated block to the Bubble database
-        window.parent.postMessage({ type: "saveBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
+        window.parent.postMessage({ type: "updateBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
 
         // Hide the popup
         popup.classList.add("hidden");
@@ -521,3 +516,7 @@ function openEditPopup(block) {
         console.log(`Block "${block.title}" updated and saved.`);
     };
 }
+
+function generateUniqueId() {
+  return `block-${Math.random().toString(36).substr(2, 9)}`;
+} 

@@ -51,7 +51,7 @@ window.addEventListener("DOMContentLoaded", function () {
             var column = currentBlock.parentElement;
             var columnId = column === null || column === void 0 ? void 0 : column.getAttribute("data-column-id");
             // Prepare block data
-            var blockData_1 = {
+            var blockData = {
                 status: "unavailable", // Default status
                 title: title || "Naamloos blok",
                 description: desc,
@@ -61,12 +61,9 @@ window.addEventListener("DOMContentLoaded", function () {
                 columnId: columnId || null, // Column ID or null if not found
             };
             // Log the block data to the console
-            console.log("Block data saved:", blockData_1);
+            console.log("Block data saved:", blockData);
             console.log("Sending block data to parent...");
-            setTimeout(function () {
-                console.log("timeout");
-                window.parent.postMessage({ type: "saveBlock", data: blockData_1 }, "https://valcori-99218.bubbleapps.io/version-test");
-            }, 1000); // 1 second delay
+            window.parent.postMessage({ type: "saveBlock", data: blockData }, "https://valcori-99218.bubbleapps.io/version-test");
             // Reset popup fields
             titleInput.value = "";
             descInput.value = "";
@@ -387,7 +384,7 @@ function renderBlocks(blocks) {
                     statusCircle.classList.add("status-done");
                 }
                 // Send the updated block to the Bubble database
-                window.parent.postMessage({ type: "saveBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
+                window.parent.postMessage({ type: "updateBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
                 console.log("Block \"".concat(block.title, "\" approved."));
             });
         }
@@ -438,9 +435,12 @@ function openEditPopup(block) {
         block.dueDate = dueDateInput.value.trim();
         block.type = typeInput.value;
         // Send the updated block to the Bubble database
-        window.parent.postMessage({ type: "saveBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
+        window.parent.postMessage({ type: "updateBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
         // Hide the popup
         popup.classList.add("hidden");
         console.log("Block \"".concat(block.title, "\" updated and saved."));
     };
+}
+function generateUniqueId() {
+    return "block-".concat(Math.random().toString(36).substr(2, 9));
 }
