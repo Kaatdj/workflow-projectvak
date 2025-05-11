@@ -4,12 +4,13 @@
   <meta charset="UTF-8" />
   <title>Workflow Canvas</title>
   <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,500,700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="toolbar">
-    <button id="editBtn">Bewerk</button>
-    <button id="zoomOutBtn">-</button>
-    <button id="zoomInBtn">+</button>
+    <button class="button-toolbar" id="editBtn">Edit</button>
+    <button class="button-toolbar" id="zoomOutBtn">-</button>
+    <button class="button-toolbar" id="zoomInBtn">+</button>
   </div>
 
   <div class="wrapper">
@@ -20,8 +21,8 @@
     <div id="sidebar" class="sidebar hidden">
       <h2>New Task</h2>
       <div class="block-palette">
-        <div class="block draggable" draggable="true">Blok A</div>
-        <div class="block draggable" draggable="true">Blok B</div>
+        <div class="block draggable" draggable="true">Task A</div>
+        <div class="block draggable" draggable="true">Task B</div>
         <div class="block draggable" draggable="true">
           <div class="add-task">
             <p style="font-size:24px">+</p>
@@ -29,7 +30,7 @@
           </div>
         </div>
       </div>
-      <button id="closeSidebar">Sluit</button>
+      <button class="button-sidebar" id="closeSidebar">Close</button>
     </div>
   </div>
 
@@ -51,7 +52,7 @@
         <option value="typeSubmit">Submit</option>
       </select>
       <input type="text" id="popupDueDate" placeholder="Due Date"/>
-      <button id="savePopup">Opslaan</button>
+      <button id="savePopup">Save</button>
     </div>
   </div>
 
