@@ -306,15 +306,18 @@ function renderBlocks(blocks) {
                 typeElement_1.textContent = "Type: ".concat(block.type || "No type");
             // Update the status circle
             if (statusCircle_1) {
-                statusCircle_1.classList.remove("status-unavailable", "status-busy", "status-done");
+                statusCircle_1.classList.remove("status-to-be-planned", "status-in-progress", "status-completed", "status-cancelled");
                 if (block.status === "done") {
-                    statusCircle_1.classList.add("status-done");
+                    statusCircle_1.classList.add("status-completed");
                 }
                 else if (block.status === "busy") {
-                    statusCircle_1.classList.add("status-busy");
+                    statusCircle_1.classList.add("status-in-progress");
+                }
+                else if (block.status === "busy") {
+                    statusCircle_1.classList.add("status-in-cancelled");
                 }
                 else {
-                    statusCircle_1.classList.add("status-unavailable");
+                    statusCircle_1.classList.add("status-to-be-planned");
                 }
             }
             return; // Skip creating a new block
@@ -353,13 +356,16 @@ function renderBlocks(blocks) {
         // Set the initial status circle color for all blocks
         if (statusCircle) {
             if (block.status === "done") {
-                statusCircle.classList.add("status-done");
+                statusCircle.classList.add("status-completed");
             }
             else if (block.status === "busy") {
-                statusCircle.classList.add("status-busy");
+                statusCircle.classList.add("status-in-progress");
+            }
+            else if (block.status === "cancelled") {
+                statusCircle.classList.add("status-cancelled");
             }
             else {
-                statusCircle.classList.add("status-unavailable");
+                statusCircle.classList.add("status-to-be-planned");
             }
         }
         // Handle "Approve" button for typeApproval blocks
@@ -380,7 +386,7 @@ function renderBlocks(blocks) {
                 approveButton.disabled = true; // Disable the button
                 // Update the circle's color
                 if (statusCircle) {
-                    statusCircle.classList.remove("status-unavailable", "status-busy");
+                    statusCircle.classList.remove("status-to-be-planned", "status-in-progress", "status-cancelled");
                     statusCircle.classList.add("status-done");
                 }
                 // Send the updated block to the Bubble database

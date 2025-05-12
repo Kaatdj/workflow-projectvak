@@ -365,14 +365,16 @@ function renderBlocks(blocks) {
 
             // Update the status circle
             if (statusCircle) {
-                statusCircle.classList.remove("status-unavailable", "status-busy", "status-done");
+                statusCircle.classList.remove("status-to-be-planned", "status-in-progress", "status-completed", "status-cancelled");
 
                 if (block.status === "done") {
-                    statusCircle.classList.add("status-done");
+                    statusCircle.classList.add("status-completed");
                 } else if (block.status === "busy") {
-                    statusCircle.classList.add("status-busy");
+                    statusCircle.classList.add("status-in-progress");
+                } else if (block.status === "busy") {
+                    statusCircle.classList.add("status-in-cancelled");
                 } else {
-                    statusCircle.classList.add("status-unavailable");
+                    statusCircle.classList.add("status-to-be-planned");
                 }
             }
 
@@ -414,11 +416,13 @@ function renderBlocks(blocks) {
         // Set the initial status circle color for all blocks
         if (statusCircle) {
             if (block.status === "done") {
-                statusCircle.classList.add("status-done");
+                statusCircle.classList.add("status-completed");
             } else if (block.status === "busy") {
-                statusCircle.classList.add("status-busy");
+                statusCircle.classList.add("status-in-progress");
+            } else if (block.status === "cancelled") {
+                statusCircle.classList.add("status-cancelled");
             } else {
-                statusCircle.classList.add("status-unavailable");
+                statusCircle.classList.add("status-to-be-planned");
             }
         }
 
@@ -441,7 +445,7 @@ function renderBlocks(blocks) {
 
                 // Update the circle's color
                 if (statusCircle) {
-                    statusCircle.classList.remove("status-unavailable", "status-busy");
+                    statusCircle.classList.remove("status-to-be-planned", "status-in-progress", "status-cancelled");
                     statusCircle.classList.add("status-done");
                 }
 

@@ -82,20 +82,32 @@ body {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background-color: grey; /* Default color */
+  background-color: #999999; /* Default color */
 }
 
 /* Status colors */
-.status-unavailable {
-  background-color: grey;
+.status-to-be-planned {
+  background-color: #999999;
 }
 
-.status-done {
-  background-color: green;
+.status-completed {
+  background-color: #56C43A;
 }
 
-.status-busy {
-  background-color: yellow;
+.button-approve {
+  background-color: #56C43A;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+}
+
+.status-in-progress {
+  background-color: #FFD426;
+}
+
+.status-cancelled {
+  background-color: #E70202;
 }
 
 .add-task {
