@@ -404,7 +404,7 @@ function renderBlocks(blocks) {
         const memberElement = blockElement.querySelector(".block-member");
         const dueDateElement = blockElement.querySelector(".block-due-date");
         const typeElement = blockElement.querySelector(".block-type");
-        const approveButton = blockElement.querySelector(".approve-btn") as HTMLButtonElement;
+        const approveButton = blockElement.querySelector(".approve-button") as HTMLButtonElement;
         const statusCircle = blockElement.querySelector(".status-circle") as HTMLElement;
 
         if (titleElement) titleElement.textContent = block.title || "Naamloos blok";
