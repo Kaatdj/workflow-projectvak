@@ -59,7 +59,7 @@ body {
 
 .block {
   width: 80%;
-  height: 100px;
+  height: auto;
   background-color: #ffffff;
   border-radius: 8px;
   display: flex;
@@ -68,7 +68,7 @@ body {
   align-items: flex-start;
   text-align: left;
   cursor: pointer;
-  padding: 24px 12px;
+  padding: 12px 24px;
   margin-bottom: 16px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Added shadow */
   position: relative;
@@ -81,6 +81,7 @@ body {
   font-size: 12px;
   gap: 4px;
   width: 100%;
+  margin-bottom: 8px;
 }
 
 .block-title {
