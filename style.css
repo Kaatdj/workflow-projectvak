@@ -66,12 +66,19 @@ body {
   justify-content: center;
   align-items: center;
   text-align: left;
-  font-size: 16px;
+  font-size: 12px;
   cursor: pointer;
-  margin-bottom: 10px;
+  padding: 24px 12px;
+  margin-bottom: 16px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Added shadow */
   position: relative;
   /* padding-left: 20px; Add space for the circle */
+}
+
+.block-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 4px;
 }
 
 /* Circle styles */
@@ -79,8 +86,8 @@ body {
   position: absolute;
   top: 5px;
   left: 5px;
-  width: 10px;
-  height: 10px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background-color: #999999; /* Default color */
 }
