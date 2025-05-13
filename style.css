@@ -120,6 +120,7 @@ body {
 
 .approve-button {
   background-color: #56C43A;
+  width: 100%;
   color: white;
   padding: 8px 16px;
   border-radius: 4px;
