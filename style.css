@@ -60,6 +60,7 @@ body {
 .block {
   width: 80%;
   height: auto;
+  min-height: 100px;
   background-color: #ffffff;
   border-radius: 8px;
   display: flex;
@@ -81,7 +82,6 @@ body {
   font-size: 12px;
   gap: 4px;
   width: 100%;
-  margin-bottom: 8px;
 }
 
 .block-title {
@@ -97,6 +97,7 @@ body {
   left: 24px; */
   width: 24px;
   height: 24px;
+  margin-bottom: 8px;
   border-radius: 50%;
   background-color: #999999; /* Default color */
 }
