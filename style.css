@@ -82,12 +82,19 @@ body {
   font-size: 12px;
   gap: 4px;
   width: 100%;
+  margin-bottom: 8px;
 }
 
 .block-title {
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 8px;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Circle styles */
