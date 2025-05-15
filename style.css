@@ -150,7 +150,7 @@ body {
 }
 
 .column {
-  flex: 0 0 200px; /* Fixed width for columns */
+  flex: 0 0 320px; /* Increased width for columns */
   display: flex;
   flex-direction: column;
   align-items: center;
