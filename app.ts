@@ -68,7 +68,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const blockData = {
         status: "unavailable", // Default status
         title: title || "Naamloos blok",
-        description: desc,
+        desc: desc,
         member: member,
         dueDate: dueDate,
         type: type,
@@ -316,7 +316,7 @@ updateBrackets();
 
 // ✅ Receive block data from parent Bubble page
 window.addEventListener("message", function(event) {
-  console.log("**Received message from parent:", event.data);
+  console.log("***Received message from parent:", event.data);
     if (event.data.type === "loadBlocks") {
         const blocks = event.data.data;
         console.log("Loading blocks into workflow:", blocks);
@@ -354,14 +354,14 @@ function renderBlocks(blocks) {
 
             // Update the existing block's content
             const titleElement = existingBlock.querySelector(".block-title");
-            const descriptionElement = existingBlock.querySelector(".block-description");
+            const descElement = existingBlock.querySelector(".block-desc");
             const memberElement = existingBlock.querySelector(".block-member");
             const dueDateElement = existingBlock.querySelector(".block-due-date");
             const typeElement = existingBlock.querySelector(".block-type");
             const statusCircle = existingBlock.querySelector(".status-circle");
 
             if (titleElement) titleElement.textContent = block.title || "Naamloos blok";
-            if (descriptionElement) descriptionElement.textContent = block.description || "No description";
+            if (descElement) descElement.textContent = block.desc || "No desc";
             if (memberElement) memberElement.textContent = `Assigned to: ${block.member || "None"}`;
             if (dueDateElement) dueDateElement.textContent = `Due: ${block.dueDate || "No due date"}`;
             if (typeElement) typeElement.textContent = `Type: ${block.type || "No type"}`;
@@ -403,7 +403,7 @@ function renderBlocks(blocks) {
 
         // Populate the block with data
         const titleElement = blockElement.querySelector(".block-title");
-        const descriptionElement = blockElement.querySelector(".block-description");
+        const descElement = blockElement.querySelector(".block-desc");
         const memberElement = blockElement.querySelector(".block-member");
         const dueDateElement = blockElement.querySelector(".block-due-date");
         const typeElement = blockElement.querySelector(".block-type");
@@ -411,7 +411,7 @@ function renderBlocks(blocks) {
         const statusCircle = blockElement.querySelector(".status-circle") as HTMLElement;
 
         if (titleElement) titleElement.textContent = block.title || "Naamloos blok";
-        if (descriptionElement) descriptionElement.textContent = block.description || "No description";
+        if (descElement) descElement.textContent = block.desc || "No desc";
         if (memberElement) memberElement.textContent = `Assigned to: ${block.member || "None"}`;
         if (dueDateElement) dueDateElement.textContent = `Due: ${block.dueDate || "No due date"}`;
         if (typeElement) typeElement.textContent = `Type: ${block.type || "No type"}`;
@@ -465,7 +465,7 @@ function renderBlocks(blocks) {
             blockDiv.setAttribute("data-id", block.id); // Add a unique identifier
             blockDiv.setAttribute("data-column-id", column.getAttribute("data-column-id") || "");
             blockDiv.setAttribute("data-title", block.title || "Naamloos blok");
-            blockDiv.setAttribute("data-description", block.description || "");
+            blockDiv.setAttribute("data-desc", block.desc || "");
             blockDiv.setAttribute("data-member", block.member || "");
             blockDiv.setAttribute("data-due-date", block.dueDate || "");
             blockDiv.setAttribute("data-type", block.type || "");
@@ -498,7 +498,7 @@ function openEditPopup(block) {
 
     // Populate the popup with the block's current data
     titleInput.value = block.title || "";
-    descInput.value = block.description || "";
+    descInput.value = block.desc || "";
     memberInput.value = block.member || "";
     dueDateInput.value = block.dueDate || "";
     typeInput.value = block.type || "";
@@ -509,7 +509,7 @@ function openEditPopup(block) {
     // Handle saving the updated block data
     savePopup.onclick = () => {
         block.title = titleInput.value.trim();
-        block.description = descInput.value.trim();
+        block.desc = descInput.value.trim();
         block.member = memberInput.value;
         block.dueDate = dueDateInput.value.trim();
         block.type = typeInput.value;
