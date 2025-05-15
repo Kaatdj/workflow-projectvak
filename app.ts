@@ -446,7 +446,7 @@ function renderBlocks(blocks) {
                 // Update the circle's color
                 if (statusCircle) {
                     statusCircle.classList.remove("status-to-be-planned", "status-in-progress", "status-cancelled");
-                    statusCircle.classList.add("status-done");
+                    statusCircle.classList.add("status-completed");
                 }
 
                 // Send the updated block to the Bubble database
