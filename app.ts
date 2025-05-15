@@ -122,13 +122,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const columnId = isStartColumn ? "start" : `col${columnCounter++}`;
     col.setAttribute("data-column-id", columnId);
 
-    if (isStartColumn) {
-      // Add the "start" block to the first column
-      const startBlock = document.createElement("div");
-      startBlock.classList.add("block", "start-block");
-      startBlock.innerText = "Start";
-      col.appendChild(startBlock);
-    }
+    // --- Removed: static "start" block creation ---
 
     col.addEventListener("dragover", (e) => {
       e.preventDefault();
@@ -526,4 +520,4 @@ function openEditPopup(block) {
 
 function generateUniqueId() {
   return `block-${Math.random().toString(36).substr(2, 9)}`;
-} 
+}

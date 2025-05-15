@@ -102,13 +102,7 @@ window.addEventListener("DOMContentLoaded", function () {
         // Assign a sequential column ID
         var columnId = isStartColumn ? "start" : "col".concat(columnCounter++);
         col.setAttribute("data-column-id", columnId);
-        if (isStartColumn) {
-            // Add the "start" block to the first column
-            var startBlock = document.createElement("div");
-            startBlock.classList.add("block", "start-block");
-            startBlock.innerText = "Start";
-            col.appendChild(startBlock);
-        }
+        // --- Removed: static "start" block creation ---
         col.addEventListener("dragover", function (e) {
             e.preventDefault();
             // Prevent highlighting the first column
