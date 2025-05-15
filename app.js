@@ -50,6 +50,8 @@ window.addEventListener("DOMContentLoaded", function () {
             // Get the column ID where the block is placed
             var column = currentBlock.parentElement;
             var columnId = column === null || column === void 0 ? void 0 : column.getAttribute("data-column-id");
+            var blockId = generateUniqueId(); // Generate a unique ID for the block
+            currentBlock.setAttribute("data-id", blockId); // Set the unique ID as a data attribute
             // Prepare block data
             var blockData = {
                 status: "unavailable", // Default status
@@ -59,6 +61,7 @@ window.addEventListener("DOMContentLoaded", function () {
                 dueDate: dueDate,
                 type: type,
                 columnId: columnId || null, // Column ID or null if not found
+                id: blockId, // Unique ID for the block
             };
             // Log the block data to the console
             console.log("Block data saved:", blockData);
@@ -258,7 +261,7 @@ window.addEventListener("DOMContentLoaded", function () {
 });
 // ✅ Receive block data from parent Bubble page
 window.addEventListener("message", function (event) {
-    console.log("***Received message from parent:", event.data);
+    console.log("**Received message from parent:", event.data);
     if (event.data.type === "loadBlocks") {
         var blocks = event.data.data;
         console.log("Loading blocks into workflow:", blocks);
@@ -280,7 +283,7 @@ function renderBlocks(blocks) {
     blocks.forEach(function (block) {
         // Generate a unique ID for the block if it doesn't already have one
         if (!block.id) {
-            block.id = "".concat(block.columnId, "-").concat(block.title, "-").concat(Date.now());
+            block.id = generateUniqueId();
         }
         console.log("Rendering block:", block);
         // Check if the block already exists in the DOM
