@@ -4,6 +4,114 @@ let currentBlock: HTMLElement | null = null;
 // Global counter for column IDs
 let columnCounter = 0;
 
+function updateBrackets() {
+  const canvas = document.getElementById("canvas"); // <-- You missed this!
+  const bracketsContainer = document.getElementById("brackets");
+  const columns = canvas?.querySelectorAll(".column");
+
+  if (!canvas || !bracketsContainer || !columns) return;
+
+  // Clear existing brackets
+  bracketsContainer.innerHTML = "";
+
+  columns.forEach((column, columnIndex) => {
+    const blocks = column.querySelectorAll(".block");
+    const prevColumn = columns[columnIndex - 1];
+    const nextColumn = columns[columnIndex + 1];
+
+    if (blocks.length >= 2) {
+      const firstBlock = blocks[0];
+      const lastBlock = blocks[blocks.length - 1];
+
+      const firstBlockRect = firstBlock.getBoundingClientRect();
+      const lastBlockRect = lastBlock.getBoundingClientRect();
+      const canvasRect = canvas.getBoundingClientRect();
+
+      const top = firstBlockRect.top + firstBlockRect.height / 2 - canvasRect.top;
+      const bottom = lastBlockRect.bottom - lastBlockRect.height / 2 - canvasRect.top;
+      const height = bottom - top;
+      const center = top + height / 2;
+
+      // Left bracket
+      const leftBracket = document.createElement("div");
+      leftBracket.classList.add("bracket-left");
+      leftBracket.style.position = "absolute";
+      leftBracket.style.top = `${top}px`;
+      leftBracket.style.left = `${(column as HTMLElement).offsetLeft + 22}px`;
+      leftBracket.style.height = `${height}px`;
+      leftBracket.style.width = "15px";
+      leftBracket.style.transform = "translateX(-100%)";
+      bracketsContainer.appendChild(leftBracket);
+
+      // Horizontal line depending on previous column
+      if (prevColumn) {
+        const prevBlocks = prevColumn.querySelectorAll(".block");
+
+        const horizontalLine = document.createElement("div");
+        horizontalLine.classList.add("horizontal-line");
+        horizontalLine.style.position = "absolute";
+        horizontalLine.style.top = `${center}px`;
+        horizontalLine.style.left = `${(column as HTMLElement).offsetLeft + 6.5}px`;
+        horizontalLine.style.transform = "translateX(-100%)";
+
+        if (prevBlocks.length > 1) {
+          horizontalLine.style.width = "33px";
+        } else {
+          horizontalLine.style.width = "50px";
+        }
+
+        bracketsContainer.appendChild(horizontalLine);
+      }
+
+      // Right bracket if there's a next column
+      if (nextColumn) {
+        const nextBlocks = nextColumn.querySelectorAll(".block");
+        if (nextBlocks.length > 0) {
+          const rightBracket = document.createElement("div");
+          rightBracket.classList.add("bracket-right");
+          rightBracket.style.position = "absolute";
+          rightBracket.style.top = `${top}px`;
+          rightBracket.style.left = `${(column as HTMLElement).offsetLeft + (column as HTMLElement).offsetWidth - 22}px`;
+          rightBracket.style.height = `${height}px`;
+          rightBracket.style.width = "15px";
+          bracketsContainer.appendChild(rightBracket);
+        }
+      }
+    }
+    else if (blocks.length === 1 && prevColumn) {
+      const firstBlock = blocks[0];
+      const lastBlock = blocks[blocks.length - 1];
+
+      const firstBlockRect = firstBlock.getBoundingClientRect();
+      const lastBlockRect = lastBlock.getBoundingClientRect();
+      const canvasRect = canvas.getBoundingClientRect();
+
+      const top = firstBlockRect.top + firstBlockRect.height / 2 - canvasRect.top;
+      const bottom = lastBlockRect.bottom - lastBlockRect.height / 2 - canvasRect.top;
+      const height = bottom - top;
+      const center = top + height / 2;
+
+      const prevBlocks = prevColumn.querySelectorAll(".block");
+
+      const horizontalLine = document.createElement("div");
+      horizontalLine.classList.add("horizontal-line");
+      horizontalLine.style.position = "absolute";
+      horizontalLine.style.top = `${center}px`;
+      horizontalLine.style.transform = "translateX(-100%)";
+
+      if (prevBlocks.length > 1) {
+        horizontalLine.style.left = `${(column as HTMLElement).offsetLeft + 24}px`;
+        horizontalLine.style.width = "50px";
+      } else if (prevBlocks.length === 1) {
+        horizontalLine.style.left = `${(column as HTMLElement).offsetLeft + 22}px`;
+        horizontalLine.style.width = "100px";
+      }
+
+      bracketsContainer.appendChild(horizontalLine);
+    }
+  });
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   const popup = document.getElementById("popup");
   const titleInput = document.getElementById("popupTitleInput") as HTMLInputElement | null;
@@ -194,118 +302,8 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Function to update brackets
- // Function to update brackets
-function updateBrackets() {
-  const canvas = document.getElementById("canvas"); // <-- You missed this!
-  const bracketsContainer = document.getElementById("brackets");
-  const columns = canvas?.querySelectorAll(".column");
-
-  if (!canvas || !bracketsContainer || !columns) return;
-
-  // Clear existing brackets
-  bracketsContainer.innerHTML = "";
-
-  columns.forEach((column, columnIndex) => {
-    const blocks = column.querySelectorAll(".block");
-    const prevColumn = columns[columnIndex - 1];
-    const nextColumn = columns[columnIndex + 1];
-
-    if (blocks.length >= 2) {
-      const firstBlock = blocks[0];
-      const lastBlock = blocks[blocks.length - 1];
-
-      const firstBlockRect = firstBlock.getBoundingClientRect();
-      const lastBlockRect = lastBlock.getBoundingClientRect();
-      const canvasRect = canvas.getBoundingClientRect();
-
-      const top = firstBlockRect.top + firstBlockRect.height / 2 - canvasRect.top;
-      const bottom = lastBlockRect.bottom - lastBlockRect.height / 2 - canvasRect.top;
-      const height = bottom - top;
-      const center = top + height / 2;
-
-      // Left bracket
-      const leftBracket = document.createElement("div");
-      leftBracket.classList.add("bracket-left");
-      leftBracket.style.position = "absolute";
-      leftBracket.style.top = `${top}px`;
-      leftBracket.style.left = `${(column as HTMLElement).offsetLeft + 22}px`;
-      leftBracket.style.height = `${height}px`;
-      leftBracket.style.width = "15px";
-      leftBracket.style.transform = "translateX(-100%)";
-      bracketsContainer.appendChild(leftBracket);
-
-      // Horizontal line depending on previous column
-      if (prevColumn) {
-        const prevBlocks = prevColumn.querySelectorAll(".block");
-
-        const horizontalLine = document.createElement("div");
-        horizontalLine.classList.add("horizontal-line");
-        horizontalLine.style.position = "absolute";
-        horizontalLine.style.top = `${center}px`;
-        horizontalLine.style.left = `${(column as HTMLElement).offsetLeft + 6.5}px`;
-        horizontalLine.style.transform = "translateX(-100%)";
-
-        if (prevBlocks.length > 1) {
-          horizontalLine.style.width = "33px";
-        } else {
-          horizontalLine.style.width = "50px";
-        }
-
-        bracketsContainer.appendChild(horizontalLine);
-      }
-
-      // Right bracket if there's a next column
-      if (nextColumn) {
-        const nextBlocks = nextColumn.querySelectorAll(".block");
-        if (nextBlocks.length > 0) {
-          const rightBracket = document.createElement("div");
-          rightBracket.classList.add("bracket-right");
-          rightBracket.style.position = "absolute";
-          rightBracket.style.top = `${top}px`;
-          rightBracket.style.left = `${(column as HTMLElement).offsetLeft + (column as HTMLElement).offsetWidth - 22}px`;
-          rightBracket.style.height = `${height}px`;
-          rightBracket.style.width = "15px";
-          bracketsContainer.appendChild(rightBracket);
-        }
-      }
-    }
-    else if (blocks.length === 1 && prevColumn) {
-      const firstBlock = blocks[0];
-      const lastBlock = blocks[blocks.length - 1];
-
-      const firstBlockRect = firstBlock.getBoundingClientRect();
-      const lastBlockRect = lastBlock.getBoundingClientRect();
-      const canvasRect = canvas.getBoundingClientRect();
-
-      const top = firstBlockRect.top + firstBlockRect.height / 2 - canvasRect.top;
-      const bottom = lastBlockRect.bottom - lastBlockRect.height / 2 - canvasRect.top;
-      const height = bottom - top;
-      const center = top + height / 2;
-
-      const prevBlocks = prevColumn.querySelectorAll(".block");
-
-      const horizontalLine = document.createElement("div");
-      horizontalLine.classList.add("horizontal-line");
-      horizontalLine.style.position = "absolute";
-      horizontalLine.style.top = `${center}px`;
-      horizontalLine.style.transform = "translateX(-100%)";
-
-      if (prevBlocks.length > 1) {
-        horizontalLine.style.left = `${(column as HTMLElement).offsetLeft + 24}px`;
-        horizontalLine.style.width = "50px";
-      } else if (prevBlocks.length === 1) {
-        horizontalLine.style.left = `${(column as HTMLElement).offsetLeft + 22}px`;
-        horizontalLine.style.width = "100px";
-      }
-
-      bracketsContainer.appendChild(horizontalLine);
-    }
-  });
-}
-
-// Call this function whenever blocks are added, removed, or moved
-updateBrackets();
+  // Call this function whenever blocks are added, removed, or moved
+  updateBrackets();
 })
 
 // ✅ Receive block data from parent Bubble page
@@ -473,6 +471,9 @@ function renderBlocks(blocks) {
 
         column.appendChild(blockElement); // Append the block to the column
     });
+
+    // Add this line to update brackets after rendering all blocks
+    updateBrackets();
 }
 
 // Function to open the popup and populate it with block data
