@@ -335,9 +335,10 @@ function renderBlocks(blocks) {
     // Check if the block already exists in the DOM
     let existingBlock = canvas.querySelector(`.block[data-id="${block.id}"]`);
     if (existingBlock) {
-      // ... update existing block logic ...
-          console.log("Block already exists, skipping render:", block.id);
-      return;
+      if (existingBlock.parentElement) {
+        existingBlock.parentElement.removeChild(existingBlock);
+      }
+      // No return here; continue to render the new block
     }
 
     // Find the column for this block
