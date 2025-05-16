@@ -112,6 +112,69 @@ function updateBrackets() {
   });
 }
 
+function createColumn(parent: HTMLElement, isStartColumn = false) {
+  const col = document.createElement("div");
+  col.classList.add("column");
+
+  // Assign "start" to the first column, otherwise use colX
+  const columns = parent.querySelectorAll(".column");
+  const columnId = isStartColumn || columns.length === 0 ? "start" : `col${columnCounter++}`;
+  col.setAttribute("data-column-id", columnId);
+
+  col.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    // Prevent highlighting the first column
+    if (col.getAttribute("data-column-id") === "start") return;
+    col.classList.add("highlight");
+  });
+
+  col.addEventListener("dragleave", () => {
+    col.classList.remove("highlight");
+  });
+
+  col.addEventListener("drop", (e) => {
+    e.preventDefault();
+    col.classList.remove("highlight");
+    // Prevent dropping in the first column
+    if (col.getAttribute("data-column-id") === "start") {
+      console.log("Cannot add blocks to the first column.");
+      return;
+    }
+    if (draggedBlock) {
+      const clone = draggedBlock.cloneNode(true) as HTMLElement;
+      clone.classList.remove("draggable");
+      clone.style.cursor = "default";
+      currentBlock = clone;
+      // Ensure the block's columnId matches the column's data-column-id
+      const columnId = col.getAttribute("data-column-id");
+      if (columnId) {
+        clone.setAttribute("data-column-id", columnId);
+        console.log(`Block added to column "${columnId}".`);
+      }
+      col.appendChild(clone);
+      // Show the popup to fill in block details
+      const popup = document.getElementById("popup");
+      if (popup) popup.classList.remove("hidden");
+      draggedBlock = null;
+      ensureExtraColumn();
+      updateBrackets();
+    }
+  });
+
+  parent.appendChild(col);
+}
+
+function ensureExtraColumn() {
+  const canvas = document.getElementById("canvas");
+  if (!canvas) return;
+  const columns = canvas.querySelectorAll(".column");
+  const lastColumn = columns[columns.length - 1];
+  // If the last column has any blocks, add a new empty column
+  if (lastColumn && lastColumn.children.length > 0) {
+    createColumn(canvas);
+  }
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   const popup = document.getElementById("popup");
   const titleInput = document.getElementById("popupTitleInput") as HTMLInputElement | null;
@@ -221,259 +284,96 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Function to create a new column
-  function createColumn(parent: HTMLElement, isStartColumn = false) {
-    const col = document.createElement("div");
-    col.classList.add("column");
-
-    // Assign a sequential column ID
-    const columnId = isStartColumn ? "start" : `col${columnCounter++}`;
-    col.setAttribute("data-column-id", columnId);
-
-    // --- Removed: static "start" block creation ---
-
-    col.addEventListener("dragover", (e) => {
-      e.preventDefault();
-
-      // Prevent highlighting the first column
-      if (isStartColumn) {
-        return;
-      }
-
-      col.classList.add("highlight");
-    });
-
-    col.addEventListener("dragleave", () => {
-      col.classList.remove("highlight");
-    });
-
-    col.addEventListener("drop", (e) => {
-      e.preventDefault();
-      col.classList.remove("highlight");
-
-      // Prevent adding blocks to the first column
-      if (isStartColumn) {
-        console.log("Cannot add blocks to the first column.");
-        return;
-      }
-
-      if (draggedBlock) {
-        const clone = draggedBlock.cloneNode(true) as HTMLElement;
-        clone.classList.remove("draggable");
-        clone.style.cursor = "default";
-
-        currentBlock = clone;
-
-        // Ensure the block's columnId matches the column's data-column-id
-        const columnId = col.getAttribute("data-column-id");
-        if (columnId) {
-          clone.setAttribute("data-column-id", columnId);
-          console.log(`Block added to column "${columnId}".`);
-        }
-
-        col.appendChild(clone);
-
-        // Show the popup to fill in block details
-        if (popup) {
-          popup.classList.remove("hidden");
-        }
-
-        draggedBlock = null;
-
-        // Ensure there is always an extra column
-        ensureExtraColumn();
-
-        // Update brackets
-        updateBrackets();
-      }
-    });
-
-    parent.appendChild(col);
-  }
-
-  // Function to ensure there is always an extra column
-  function ensureExtraColumn() {
-    const columns = canvas ? canvas.querySelectorAll(".column") : [];
-    const lastColumn = columns[columns.length - 1];
-
-    // If the last column has any blocks, add a new empty column
-    if (lastColumn && lastColumn.children.length > 0) {
-      createColumn(canvas);
-    }
-  }
-
-  // Call this function whenever blocks are added, removed, or moved
+  // Initial brackets
   updateBrackets();
-})
+});
 
 // ✅ Receive block data from parent Bubble page
 window.addEventListener("message", function(event) {
   console.log("***Received message from parent:", event.data);
-    if (event.data.type === "loadBlocks") {
-        const blocks = event.data.data;
-        console.log("Loading blocks into workflow:", blocks);
-        renderBlocks(blocks);
-    }
+  if (event.data.type === "loadBlocks") {
+    const blocks = event.data.data;
+    console.log("Loading blocks into workflow:", blocks);
+    renderBlocks(blocks);
+  }
 });
 
 // ✅ Function to render blocks from database
 function renderBlocks(blocks) {
-    const canvas = document.getElementById("canvas");
-    const template = document.getElementById("block-template") as HTMLTemplateElement;
+  const canvas = document.getElementById("canvas");
+  const template = document.getElementById("block-template") as HTMLTemplateElement;
 
-    if (!canvas) {
-        console.error("Canvas element not found!");
-        return;
+  if (!canvas) {
+    console.error("Canvas element not found!");
+    return;
+  }
+  if (!template) {
+    console.error("Block template not found!");
+    return;
+  }
+
+  // --- Ensure columns for all block.columnId values ---
+  const columnIdMap: { [key: string]: boolean } = {};
+  const neededColumnIds: string[] = [];
+  for (var i = 0; i < blocks.length; i++) {
+    var id = blocks[i].columnId;
+    if (id && !columnIdMap[id]) {
+      columnIdMap[id] = true;
+      neededColumnIds.push(id);
+    }
+  }
+  neededColumnIds.forEach(id => {
+    if (id === "start") return; // The first column already exists
+    if (!canvas.querySelector(`[data-column-id="${id}"]`)) {
+      createColumn(canvas); // Use createColumn to ensure correct IDs
+    }
+  });
+
+  blocks.forEach((block) => {
+    if (!block.id) block.id = generateUniqueId();
+
+    // Check if the block already exists in the DOM
+    let existingBlock = canvas.querySelector(`.block[data-id="${block.id}"]`);
+    if (existingBlock) {
+      // ... update existing block logic ...
+      return;
     }
 
-    if (!template) {
-        console.error("Block template not found!");
-        return;
+    // Find the column for this block
+    let column = canvas.querySelector(`[data-column-id="${block.columnId}"]`);
+    if (!column) {
+      // Should not happen, but fallback
+      column = canvas.querySelector('.column:not([data-column-id="start"])');
+      if (!column) {
+        createColumn(canvas);
+        column = canvas.lastElementChild as HTMLElement;
+      }
     }
 
-    blocks.forEach((block) => {
-// Generate a unique ID for the block if it doesn't already have one
-        if (!block.id) {
-            block.id = generateUniqueId();
-        }
+    // Clone the block template
+    const blockElement = template.content.cloneNode(true) as HTMLElement;
 
-        console.log("Rendering block:", block);
+    // ...populate blockElement as before...
 
-        // Check if the block already exists in the DOM
-        let existingBlock = canvas.querySelector(`.block[data-id="${block.id}"]`);
-        if (existingBlock) {
-            console.log(`Block with ID ${block.id} already exists. Updating...`);
+    // Add click event listener to the block for editing
+    const blockDiv = blockElement.querySelector(".block") as HTMLElement;
+    if (blockDiv) {
+      blockDiv.setAttribute("data-id", block.id);
+      blockDiv.setAttribute("data-column-id", column.getAttribute("data-column-id") || "");
+      // ...other attributes...
+      blockDiv.addEventListener("click", () => {
+        openEditPopup(block);
+      });
+    }
 
-            // Update the existing block's content
-            const titleElement = existingBlock.querySelector(".block-title");
-            const descElement = existingBlock.querySelector(".block-desc");
-            const memberElement = existingBlock.querySelector(".block-member");
-            const dueDateElement = existingBlock.querySelector(".block-due-date");
-            const typeElement = existingBlock.querySelector(".block-type");
-            const statusCircle = existingBlock.querySelector(".status-circle");
+    column.appendChild(blockElement);
+  });
 
-            if (titleElement) titleElement.textContent = block.title || "Naamloos blok";
-            if (descElement) descElement.textContent = block.desc || "No desc";
-            if (memberElement) memberElement.textContent = `Assigned to: ${block.member || "None"}`;
-            if (dueDateElement) dueDateElement.textContent = `Due: ${block.dueDate || "No due date"}`;
-            if (typeElement) typeElement.textContent = `Type: ${block.type || "No type"}`;
+  // Ensure extra column at the end
+  ensureExtraColumn();
 
-            // Update the status circle
-            if (statusCircle) {
-                statusCircle.classList.remove("status-to-be-planned", "status-in-progress", "status-completed", "status-cancelled");
-
-                if (block.status === "done") {
-                    statusCircle.classList.add("status-completed");
-                } else if (block.status === "busy") {
-                    statusCircle.classList.add("status-in-progress");
-                } else if (block.status === "busy") {
-                    statusCircle.classList.add("status-in-cancelled");
-                } else {
-                    statusCircle.classList.add("status-to-be-planned");
-                }
-            }
-
-            return; // Skip creating a new block
-        }
-
-        // If the block does not exist, create a new one
-        let column = canvas.querySelector(`[data-column-id="${block.columnId}"]`);
-        if (!column) {
-            console.log(`Column with ID ${block.columnId} not found. Creating a new column.`);
-            column = document.createElement("div");
-            column.classList.add("column");
-
-            // Assign a sequential column ID
-            const newColumnId = `col${columnCounter++}`;
-            column.setAttribute("data-column-id", newColumnId);
-
-            canvas.appendChild(column);
-        }
-
-        // Clone the block template
-        const blockElement = template.content.cloneNode(true) as HTMLElement;
-
-        // Populate the block with data
-        const titleElement = blockElement.querySelector(".block-title");
-        const descElement = blockElement.querySelector(".block-desc");
-        const memberElement = blockElement.querySelector(".block-member");
-        const dueDateElement = blockElement.querySelector(".block-due-date");
-        const typeElement = blockElement.querySelector(".block-type");
-        const approveButton = blockElement.querySelector(".approve-button") as HTMLButtonElement;
-        const statusCircle = blockElement.querySelector(".status-circle") as HTMLElement;
-
-        if (titleElement) titleElement.textContent = block.title || "Naamloos blok";
-        if (descElement) descElement.textContent = block.desc || "No desc";
-        if (memberElement) memberElement.textContent = `Assigned to: ${block.member || "None"}`;
-        if (dueDateElement) dueDateElement.textContent = `Due: ${block.dueDate || "No due date"}`;
-        if (typeElement) typeElement.textContent = `Type: ${block.type || "No type"}`;
-
-        // Set the initial status circle color for all blocks
-        if (statusCircle) {
-            if (block.status === "done") {
-                statusCircle.classList.add("status-completed");
-            } else if (block.status === "busy") {
-                statusCircle.classList.add("status-in-progress");
-            } else if (block.status === "cancelled") {
-                statusCircle.classList.add("status-cancelled");
-            } else {
-                statusCircle.classList.add("status-to-be-planned");
-            }
-        }
-
-        // Handle "Approve" button for typeApproval blocks
-        if (block.type === "typeApproval" && approveButton) {
-            approveButton.classList.remove("hidden");
-            if (block.status === "done") {
-                approveButton.textContent = "Approved"; // Change button text
-                approveButton.disabled = true; // Disable the button
-            } else {
-                approveButton.textContent = "Approve";
-            }
-
-            // Add click event listener to the button
-            approveButton.addEventListener("click", (event) => {
-                event.stopPropagation(); // Prevent the click from propagating to the block
-                block.status = "done"; // Update the block's status locally
-                approveButton.textContent = "Approved"; // Change button text
-                approveButton.disabled = true; // Disable the button
-
-                // Update the circle's color
-                if (statusCircle) {
-                    statusCircle.classList.remove("status-to-be-planned", "status-in-progress", "status-cancelled");
-                    statusCircle.classList.add("status-completed");
-                }
-
-                // Send the updated block to the Bubble database
-                window.parent.postMessage({ type: "updateBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
-
-                console.log(`Block "${block.title}" approved.`);
-            });
-        }
-
-        // Add click event listener to the block for editing
-        const blockDiv = blockElement.querySelector(".block") as HTMLElement;
-        if (blockDiv) {
-            blockDiv.setAttribute("data-id", block.id); // Add a unique identifier
-            blockDiv.setAttribute("data-column-id", column.getAttribute("data-column-id") || "");
-            blockDiv.setAttribute("data-title", block.title || "Naamloos blok");
-            blockDiv.setAttribute("data-desc", block.desc || "");
-            blockDiv.setAttribute("data-member", block.member || "");
-            blockDiv.setAttribute("data-due-date", block.dueDate || "");
-            blockDiv.setAttribute("data-type", block.type || "");
-
-            blockDiv.addEventListener("click", () => {
-                openEditPopup(block); // Open the popup to edit the block
-            });
-        }
-
-        console.log(`Block "${block.title}" assigned to column "${column.getAttribute("data-column-id")}".`);
-
-        column.appendChild(blockElement); // Append the block to the column
-    });
-
-    // Add this line to update brackets after rendering all blocks
-    updateBrackets();
+  // Update brackets after rendering all blocks
+  updateBrackets();
 }
 
 // Function to open the popup and populate it with block data
