@@ -353,7 +353,63 @@ function renderBlocks(blocks) {
     // Clone the block template
     const blockElement = template.content.cloneNode(true) as HTMLElement;
 
-    // ...populate blockElement as before...
+        // Populate the block with data
+        const titleElement = blockElement.querySelector(".block-title");
+        const descElement = blockElement.querySelector(".block-desc");
+        const memberElement = blockElement.querySelector(".block-member");
+        const dueDateElement = blockElement.querySelector(".block-due-date");
+        const typeElement = blockElement.querySelector(".block-type");
+        const approveButton = blockElement.querySelector(".approve-button") as HTMLButtonElement;
+        const statusCircle = blockElement.querySelector(".status-circle") as HTMLElement;
+
+        if (titleElement) titleElement.textContent = block.title || "Naamloos blok";
+        if (descElement) descElement.textContent = block.desc || "No desc";
+        if (memberElement) memberElement.textContent = `Assigned to: ${block.member || "None"}`;
+        if (dueDateElement) dueDateElement.textContent = `Due: ${block.dueDate || "No due date"}`;
+        if (typeElement) typeElement.textContent = `Type: ${block.type || "No type"}`;
+
+        // Set the initial status circle color for all blocks
+        if (statusCircle) {
+            if (block.status === "done") {
+                statusCircle.classList.add("status-completed");
+            } else if (block.status === "busy") {
+                statusCircle.classList.add("status-in-progress");
+            } else if (block.status === "cancelled") {
+                statusCircle.classList.add("status-cancelled");
+            } else {
+                statusCircle.classList.add("status-to-be-planned");
+            }
+        }
+
+        // Handle "Approve" button for typeApproval blocks
+        if (block.type === "typeApproval" && approveButton) {
+            approveButton.classList.remove("hidden");
+            if (block.status === "done") {
+                approveButton.textContent = "Approved"; // Change button text
+                approveButton.disabled = true; // Disable the button
+            } else {
+                approveButton.textContent = "Approve";
+            }
+
+            // Add click event listener to the button
+            approveButton.addEventListener("click", (event) => {
+                event.stopPropagation(); // Prevent the click from propagating to the block
+                block.status = "done"; // Update the block's status locally
+                approveButton.textContent = "Approved"; // Change button text
+                approveButton.disabled = true; // Disable the button
+
+                // Update the circle's color
+                if (statusCircle) {
+                    statusCircle.classList.remove("status-to-be-planned", "status-in-progress", "status-cancelled");
+                    statusCircle.classList.add("status-completed");
+                }
+
+                // Send the updated block to the Bubble database
+                window.parent.postMessage({ type: "updateBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
+
+                console.log(`Block "${block.title}" approved.`);
+            });
+        }
 
     // Add click event listener to the block for editing
     const blockDiv = blockElement.querySelector(".block") as HTMLElement;
