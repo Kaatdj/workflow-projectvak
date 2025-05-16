@@ -336,6 +336,7 @@ function renderBlocks(blocks) {
     let existingBlock = canvas.querySelector(`.block[data-id="${block.id}"]`);
     if (existingBlock) {
       // ... update existing block logic ...
+          console.log("Block already exists, skipping render:", block.id);
       return;
     }
 

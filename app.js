@@ -294,6 +294,7 @@ function renderBlocks(blocks) {
         var existingBlock = canvas.querySelector(".block[data-id=\"".concat(block.id, "\"]"));
         if (existingBlock) {
             // ... update existing block logic ...
+            console.log("Block already exists, skipping render:", block.id);
             return;
         }
         // Find the column for this block
