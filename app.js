@@ -262,12 +262,8 @@ window.addEventListener("message", function (event) {
 function renderBlocks(blocks) {
     var canvas = document.getElementById("canvas");
     var template = document.getElementById("block-template");
-    if (!canvas) {
-        console.error("Canvas element not found!");
-        return;
-    }
-    if (!template) {
-        console.error("Block template not found!");
+    if (!canvas || !template) {
+        console.error("Canvas or template not found!");
         return;
     }
     // --- Ensure columns for all block.columnId values ---
@@ -282,138 +278,168 @@ function renderBlocks(blocks) {
     }
     neededColumnIds.forEach(function (id) {
         if (id === "start")
-            return; // The first column already exists
+            return;
         if (!canvas.querySelector("[data-column-id=\"".concat(id, "\"]"))) {
-            createColumn(canvas); // Use createColumn to ensure correct IDs
+            createColumn(canvas);
         }
     });
+    // --- Group blocks by columnId for easier processing ---
+    var blocksByColumn = {};
     blocks.forEach(function (block) {
-        if (!block.id)
-            block.id = generateUniqueId();
-        // Check if the block already exists in the DOM
-        var existingBlock = canvas.querySelector(".block[data-id=\"".concat(block.id, "\"]"));
-        if (existingBlock) {
-            if (existingBlock.parentElement) {
+        if (!blocksByColumn[block.columnId])
+            blocksByColumn[block.columnId] = [];
+        blocksByColumn[block.columnId].push(block);
+    });
+    // --- Sort columns in the order they appear in the DOM ---
+    var columns = [].slice.call(canvas.querySelectorAll('.column'));
+    // --- Track done status for previous columns ---
+    var allPrevDone = true;
+    for (var colIdx = 0; colIdx < columns.length; colIdx++) {
+        var col = columns[colIdx];
+        var colId = col.getAttribute("data-column-id");
+        var colBlocks = colId ? (blocksByColumn[colId] || []) : [];
+        // If not the first column, check if all previous columns' blocks are done
+        if (colIdx > 0 && allPrevDone) {
+            // Check all blocks in all previous columns
+            var prevBlocksDone = true;
+            for (var prevIdx = 0; prevIdx < colIdx; prevIdx++) {
+                var prevColId = columns[prevIdx].getAttribute("data-column-id");
+                var prevBlocks = prevColId ? (blocksByColumn[prevColId] || []) : [];
+                for (var _i = 0, prevBlocks_1 = prevBlocks; _i < prevBlocks_1.length; _i++) {
+                    var b = prevBlocks_1[_i];
+                    if (b.status !== "done") {
+                        prevBlocksDone = false;
+                        break;
+                    }
+                }
+                if (!prevBlocksDone)
+                    break;
+            }
+            // If all previous blocks are done, set current column's blocks to busy (unless done/cancelled)
+            if (prevBlocksDone) {
+                for (var _a = 0, colBlocks_1 = colBlocks; _a < colBlocks_1.length; _a++) {
+                    var b = colBlocks_1[_a];
+                    if (b.status !== "done" && b.status !== "cancelled") {
+                        b.status = "busy";
+                    }
+                }
+            }
+            allPrevDone = prevBlocksDone;
+        }
+        var _loop_1 = function (block) {
+            if (!block.id)
+                block.id = generateUniqueId();
+            // Remove existing block if present
+            var existingBlock = canvas.querySelector(".block[data-id=\"".concat(block.id, "\"]"));
+            if (existingBlock && existingBlock.parentElement) {
                 existingBlock.parentElement.removeChild(existingBlock);
             }
-            // No return here; continue to render the new block
-        }
-        // Find the column for this block
-        var column = canvas.querySelector("[data-column-id=\"".concat(block.columnId, "\"]"));
-        if (!column) {
-            // Should not happen, but fallback
-            column = canvas.querySelector('.column:not([data-column-id="start"])');
-            if (!column) {
-                createColumn(canvas);
-                column = canvas.lastElementChild;
-            }
-        }
-        // Clone the block template
-        var blockElement = template.content.cloneNode(true);
-        // Populate the block with data
-        var titleElement = blockElement.querySelector(".block-title");
-        var descElement = blockElement.querySelector(".block-desc");
-        var memberElement = blockElement.querySelector(".block-member");
-        var dueDateElement = blockElement.querySelector(".block-due-date");
-        var typeElement = blockElement.querySelector(".block-type");
-        var approveButton = blockElement.querySelector(".approve-button");
-        var doneButton = blockElement.querySelector(".done-button");
-        var statusCircle = blockElement.querySelector(".status-circle");
-        if (titleElement)
-            titleElement.textContent = block.title || "Naamloos blok";
-        if (descElement)
-            descElement.textContent = block.desc || "No desc";
-        if (memberElement)
-            memberElement.textContent = "Assigned to: ".concat(block.member || "None");
-        if (dueDateElement)
-            dueDateElement.textContent = "Due: ".concat(block.dueDate || "No due date");
-        if (typeElement)
-            typeElement.textContent = "Type: ".concat(block.type || "No type");
-        // Set the initial status circle color for all blocks
-        if (statusCircle) {
-            if (block.status === "done") {
-                statusCircle.classList.add("status-completed");
-            }
-            else if (block.status === "busy") {
-                statusCircle.classList.add("status-in-progress");
-            }
-            else if (block.status === "cancelled") {
-                statusCircle.classList.add("status-cancelled");
-            }
-            else {
-                statusCircle.classList.add("status-to-be-planned");
-            }
-        }
-        // Handle "Approve" button for typeApproval blocks
-        if (block.type === "typeApproval" && approveButton) {
-            approveButton.classList.remove("hidden");
-            if (block.status === "done") {
-                approveButton.textContent = "Approved"; // Change button text
-                approveButton.disabled = true; // Disable the button
-            }
-            else if (block.status === "unavailable") {
-                doneButton.disabled = true; // Disable the button
-            }
-            else {
-                approveButton.textContent = "Approve";
-            }
-            // Add click event listener to the button
-            approveButton.addEventListener("click", function (event) {
-                event.stopPropagation(); // Prevent the click from propagating to the block
-                block.status = "done"; // Update the block's status locally
-                approveButton.textContent = "Approved"; // Change button text
-                approveButton.disabled = true; // Disable the button
-                // Update the circle's color
-                if (statusCircle) {
-                    statusCircle.classList.remove("status-to-be-planned", "status-in-progress", "status-cancelled");
+            // Clone the block template
+            var blockElement = template.content.cloneNode(true);
+            // Populate the block with data
+            var titleElement = blockElement.querySelector(".block-title");
+            var descElement = blockElement.querySelector(".block-desc");
+            var memberElement = blockElement.querySelector(".block-member");
+            var dueDateElement = blockElement.querySelector(".block-due-date");
+            var typeElement = blockElement.querySelector(".block-type");
+            var approveButton = blockElement.querySelector(".approve-button");
+            var doneButton = blockElement.querySelector(".done-button");
+            var statusCircle = blockElement.querySelector(".status-circle");
+            if (titleElement)
+                titleElement.textContent = block.title || "Naamloos blok";
+            if (descElement)
+                descElement.textContent = block.desc || "No desc";
+            if (memberElement)
+                memberElement.textContent = "Assigned to: ".concat(block.member || "None");
+            if (dueDateElement)
+                dueDateElement.textContent = "Due: ".concat(block.dueDate || "No due date");
+            if (typeElement)
+                typeElement.textContent = "Type: ".concat(block.type || "No type");
+            // Set the initial status circle color for all blocks
+            if (statusCircle) {
+                statusCircle.classList.remove("status-completed", "status-in-progress", "status-cancelled", "status-to-be-planned");
+                if (block.status === "done") {
                     statusCircle.classList.add("status-completed");
                 }
-                // Send the updated block to the Bubble database
-                window.parent.postMessage({ type: "updateBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
-                console.log("Block \"".concat(block.title, "\" approved."));
-            });
-        }
-        // Handle "Done" button for typeDone blocks
-        if (block.type === "typeAccept" && doneButton) {
-            doneButton.classList.remove("hidden");
-            if (block.status === "done") {
-                doneButton.textContent = "Done ✔"; // Change button text
-                doneButton.disabled = true; // Disable the button
-            }
-            else if (block.status === "unavailable") {
-                doneButton.disabled = true; // Disable the button
-            }
-            else {
-                doneButton.textContent = "Mark as done";
-            }
-            // Add click event listener to the button
-            doneButton.addEventListener("click", function (event) {
-                event.stopPropagation(); // Prevent the click from propagating to the block
-                block.status = "done"; // Update the block's status locally
-                doneButton.textContent = "Done ✔"; // Change button text
-                doneButton.disabled = true; // Disable the button
-                // Update the circle's color
-                if (statusCircle) {
-                    statusCircle.classList.remove("status-to-be-planned", "status-in-progress", "status-cancelled");
-                    statusCircle.classList.add("status-completed");
+                else if (block.status === "busy") {
+                    statusCircle.classList.add("status-in-progress");
                 }
-                // Send the updated block to the Bubble database
-                window.parent.postMessage({ type: "updateBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
-                console.log("Block \"".concat(block.title, "\" marked as done."));
-            });
+                else if (block.status === "cancelled") {
+                    statusCircle.classList.add("status-cancelled");
+                }
+                else {
+                    statusCircle.classList.add("status-to-be-planned");
+                }
+            }
+            // Handle "Approve" button for typeApproval blocks
+            if (block.type === "typeApproval" && approveButton) {
+                approveButton.classList.remove("hidden");
+                if (block.status === "done") {
+                    approveButton.textContent = "Approved";
+                    approveButton.disabled = true;
+                }
+                else if (block.status === "unavailable") {
+                    doneButton.disabled = true;
+                }
+                else {
+                    approveButton.textContent = "Approve";
+                }
+                approveButton.addEventListener("click", function (event) {
+                    event.stopPropagation();
+                    block.status = "done";
+                    approveButton.textContent = "Approved";
+                    approveButton.disabled = true;
+                    if (statusCircle) {
+                        statusCircle.classList.remove("status-to-be-planned", "status-in-progress", "status-cancelled");
+                        statusCircle.classList.add("status-completed");
+                    }
+                    window.parent.postMessage({ type: "updateBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
+                    console.log("Block \"".concat(block.title, "\" approved."));
+                });
+            }
+            // Handle "Done" button for typeAccept blocks
+            if (block.type === "typeAccept" && doneButton) {
+                doneButton.classList.remove("hidden");
+                if (block.status === "done") {
+                    doneButton.textContent = "Done ✔";
+                    doneButton.disabled = true;
+                }
+                else if (block.status === "unavailable") {
+                    doneButton.disabled = true;
+                }
+                else {
+                    doneButton.textContent = "Mark as done";
+                }
+                doneButton.addEventListener("click", function (event) {
+                    event.stopPropagation();
+                    block.status = "done";
+                    doneButton.textContent = "Done ✔";
+                    doneButton.disabled = true;
+                    if (statusCircle) {
+                        statusCircle.classList.remove("status-to-be-planned", "status-in-progress", "status-cancelled");
+                        statusCircle.classList.add("status-completed");
+                    }
+                    window.parent.postMessage({ type: "updateBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
+                    console.log("Block \"".concat(block.title, "\" marked as done."));
+                });
+            }
+            // Add click event listener to the block for editing
+            var blockDiv = blockElement.querySelector(".block");
+            if (blockDiv) {
+                blockDiv.setAttribute("data-id", block.id);
+                blockDiv.setAttribute("data-column-id", colId || "");
+                blockDiv.addEventListener("click", function () {
+                    openEditPopup(block);
+                });
+            }
+            col.appendChild(blockElement);
+        };
+        // Render blocks for this column
+        for (var _b = 0, colBlocks_2 = colBlocks; _b < colBlocks_2.length; _b++) {
+            var block = colBlocks_2[_b];
+            _loop_1(block);
         }
-        // Add click event listener to the block for editing
-        var blockDiv = blockElement.querySelector(".block");
-        if (blockDiv) {
-            blockDiv.setAttribute("data-id", block.id);
-            blockDiv.setAttribute("data-column-id", column.getAttribute("data-column-id") || "");
-            // ...other attributes...
-            blockDiv.addEventListener("click", function () {
-                openEditPopup(block);
-            });
-        }
-        column.appendChild(blockElement);
-    });
+    }
     // Ensure extra column at the end
     ensureExtraColumn();
     // Update brackets after rendering all blocks
