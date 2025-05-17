@@ -317,6 +317,7 @@ function renderBlocks(blocks) {
         var dueDateElement = blockElement.querySelector(".block-due-date");
         var typeElement = blockElement.querySelector(".block-type");
         var approveButton = blockElement.querySelector(".approve-button");
+        var doneButton = blockElement.querySelector(".done-button");
         var statusCircle = blockElement.querySelector(".status-circle");
         if (titleElement)
             titleElement.textContent = block.title || "Naamloos blok";
@@ -350,6 +351,9 @@ function renderBlocks(blocks) {
                 approveButton.textContent = "Approved"; // Change button text
                 approveButton.disabled = true; // Disable the button
             }
+            else if (block.status === "unavailable") {
+                doneButton.disabled = true; // Disable the button
+            }
             else {
                 approveButton.textContent = "Approve";
             }
@@ -367,6 +371,35 @@ function renderBlocks(blocks) {
                 // Send the updated block to the Bubble database
                 window.parent.postMessage({ type: "updateBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
                 console.log("Block \"".concat(block.title, "\" approved."));
+            });
+        }
+        // Handle "Done" button for typeDone blocks
+        if (block.type === "typeAccept" && doneButton) {
+            doneButton.classList.remove("hidden");
+            if (block.status === "done") {
+                doneButton.textContent = "Done ✔"; // Change button text
+                doneButton.disabled = true; // Disable the button
+            }
+            else if (block.status === "unavailable") {
+                doneButton.disabled = true; // Disable the button
+            }
+            else {
+                doneButton.textContent = "Mark as done";
+            }
+            // Add click event listener to the button
+            doneButton.addEventListener("click", function (event) {
+                event.stopPropagation(); // Prevent the click from propagating to the block
+                block.status = "done"; // Update the block's status locally
+                doneButton.textContent = "Done ✔"; // Change button text
+                doneButton.disabled = true; // Disable the button
+                // Update the circle's color
+                if (statusCircle) {
+                    statusCircle.classList.remove("status-to-be-planned", "status-in-progress", "status-cancelled");
+                    statusCircle.classList.add("status-completed");
+                }
+                // Send the updated block to the Bubble database
+                window.parent.postMessage({ type: "updateBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
+                console.log("Block \"".concat(block.title, "\" marked as done."));
             });
         }
         // Add click event listener to the block for editing
