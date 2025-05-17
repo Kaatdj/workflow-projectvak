@@ -76,6 +76,15 @@ body {
   /* padding-left: 20px; Add space for the circle */
 }
 
+.block_ {
+  width: 70%;
+  background-color: #ffffff;
+  cursor: pointer;
+  padding: 12px 24px;
+  margin-bottom: 16px;
+  position: relative;
+}
+
 .block-content {
   display: flex;
   flex-direction: column;
