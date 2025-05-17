@@ -377,10 +377,13 @@ function renderBlocks(blocks) {
       if (existingBlock && existingBlock.parentElement) {
         existingBlock.parentElement.removeChild(existingBlock);
       }
+      console.log("Rendering block:", block);
       // Skip rendering this block if the description is "delete"
       if (block.desc === "delete") {
+        console.log(`Skipping block "${block.title}" due to delete instruction.`);
         continue; // Skip this block, do not render
       }
+      console.log("desc of rendered block", block.desc);
       // Clone the block template
       const blockElement = template.content.cloneNode(true) as HTMLElement;
 

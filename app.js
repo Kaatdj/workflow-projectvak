@@ -334,10 +334,13 @@ function renderBlocks(blocks) {
             if (existingBlock && existingBlock.parentElement) {
                 existingBlock.parentElement.removeChild(existingBlock);
             }
+            console.log("Rendering block:", block);
             // Skip rendering this block if the description is "delete"
             if (block.desc === "delete") {
+                console.log("Skipping block \"".concat(block.title, "\" due to delete instruction."));
                 return "continue";
             }
+            console.log("desc of rendered block", block.desc);
             // Clone the block template
             var blockElement = template.content.cloneNode(true);
             // Populate the block with data
