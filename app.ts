@@ -227,8 +227,6 @@ window.addEventListener("DOMContentLoaded", () => {
       const dueDate = dueDateInput.value.trim();
       const type = typeInput.value;
 
-      currentBlock.innerText = title || "Naamloos blok";
-
       // Get the column ID where the block is placed
       const column = currentBlock.parentElement;
       const columnId = column?.getAttribute("data-column-id");

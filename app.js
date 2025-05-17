@@ -198,7 +198,6 @@ window.addEventListener("DOMContentLoaded", function () {
             var member = memberInput.value;
             var dueDate = dueDateInput.value.trim();
             var type = typeInput.value;
-            currentBlock.innerText = title || "Naamloos blok";
             // Get the column ID where the block is placed
             var column = currentBlock.parentElement;
             var columnId = column === null || column === void 0 ? void 0 : column.getAttribute("data-column-id");
