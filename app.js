@@ -198,6 +198,7 @@ window.addEventListener("DOMContentLoaded", function () {
             var member = memberInput.value;
             var dueDate = dueDateInput.value.trim();
             var type = typeInput.value;
+            currentBlock.innerText = "";
             // Get the column ID where the block is placed
             var column = currentBlock.parentElement;
             var columnId = column === null || column === void 0 ? void 0 : column.getAttribute("data-column-id");
@@ -265,6 +266,15 @@ function renderBlocks(blocks) {
         console.error("Canvas or template not found!");
         return;
     }
+    // --- Remove any existing blocks with desc === "delete" ---
+    var allBlockDivs = canvas.querySelectorAll('.block');
+    allBlockDivs.forEach(function (blockDiv) {
+        var _a, _b;
+        var desc = (_a = blockDiv.querySelector('.block-desc')) === null || _a === void 0 ? void 0 : _a.textContent;
+        if (desc === "delete") {
+            (_b = blockDiv.parentElement) === null || _b === void 0 ? void 0 : _b.removeChild(blockDiv);
+        }
+    });
     // --- Ensure columns for all block.columnId values ---
     var columnIdMap = {};
     var neededColumnIds = [];
