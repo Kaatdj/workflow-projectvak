@@ -241,6 +241,10 @@ window.addEventListener("DOMContentLoaded", function () {
             memberInput.value = "";
             dueDateInput.value = "";
             typeInput.value = "";
+            // Remove the unsaved block from the DOM
+            if (currentBlock && currentBlock.parentElement) {
+                currentBlock.parentElement.removeChild(currentBlock);
+            }
             // Hide the popup
             popup.classList.add("hidden");
             currentBlock = null;
