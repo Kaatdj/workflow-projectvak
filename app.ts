@@ -540,6 +540,7 @@ function openEditPopup(block) {
   if (deleteButton) {
     deleteButton.onclick = () => {
       block.type = "deleted";
+      block.status = "done";
       window.parent.postMessage({ type: "updateBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
       popup.classList.add("hidden");
       console.log(`Block "${block.title}" marked as delete.`);
