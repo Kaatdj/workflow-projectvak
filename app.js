@@ -336,7 +336,7 @@ function renderBlocks(blocks) {
             }
             console.log("Rendering block:", block);
             // Skip rendering this block if the description is "delete"
-            if (block.desc === "delete") {
+            if (block.status === "deleted") {
                 console.log("Skipping block \"".concat(block.title, "\" due to delete instruction."));
                 return "continue";
             }
@@ -487,6 +487,15 @@ function openEditPopup(block) {
         popup.classList.add("hidden");
         console.log("Block \"".concat(block.title, "\" updated and saved."));
     };
+    var deleteButton = document.getElementById("deleteBlock");
+    if (deleteButton) {
+        deleteButton.onclick = function () {
+            block.status = "deleted";
+            window.parent.postMessage({ type: "updateBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
+            popup.classList.add("hidden");
+            console.log("Block \"".concat(block.title, "\" marked as delete."));
+        };
+    }
 }
 function generateUniqueId() {
     return "block-".concat(Math.random().toString(36).substr(2, 9));
