@@ -118,7 +118,7 @@ body {
   background-color: #56C43A;
 }
 
-.approve-button {
+.approve-button, .done-button {
   background-color: #56C43A;
   width: 100%;
   color: white;
