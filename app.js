@@ -266,15 +266,6 @@ function renderBlocks(blocks) {
         console.error("Canvas or template not found!");
         return;
     }
-    // --- Remove any existing blocks with desc === "delete" ---
-    var allBlockDivs = canvas.querySelectorAll('.block');
-    allBlockDivs.forEach(function (blockDiv) {
-        var _a, _b;
-        var desc = (_a = blockDiv.querySelector('.block-desc')) === null || _a === void 0 ? void 0 : _a.textContent;
-        if (desc === "delete") {
-            (_b = blockDiv.parentElement) === null || _b === void 0 ? void 0 : _b.removeChild(blockDiv);
-        }
-    });
     // --- Ensure columns for all block.columnId values ---
     var columnIdMap = {};
     var neededColumnIds = [];
@@ -342,6 +333,10 @@ function renderBlocks(blocks) {
             var existingBlock = canvas.querySelector(".block[data-id=\"".concat(block.id, "\"]"));
             if (existingBlock && existingBlock.parentElement) {
                 existingBlock.parentElement.removeChild(existingBlock);
+            }
+            // Skip rendering this block if the description is "delete"
+            if (block.desc === "delete") {
+                return "continue";
             }
             // Clone the block template
             var blockElement = template.content.cloneNode(true);

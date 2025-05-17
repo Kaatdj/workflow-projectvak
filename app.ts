@@ -308,15 +308,6 @@ function renderBlocks(blocks) {
     return;
   }
 
-  // --- Remove any existing blocks with desc === "delete" ---
-  const allBlockDivs = canvas.querySelectorAll('.block');
-  allBlockDivs.forEach(blockDiv => {
-    const desc = blockDiv.querySelector('.block-desc')?.textContent;
-    if (desc === "delete") {
-      blockDiv.parentElement?.removeChild(blockDiv);
-    }
-  });
-
   // --- Ensure columns for all block.columnId values ---
   const columnIdMap: { [key: string]: boolean } = {};
   const neededColumnIds: string[] = [];
@@ -386,7 +377,10 @@ function renderBlocks(blocks) {
       if (existingBlock && existingBlock.parentElement) {
         existingBlock.parentElement.removeChild(existingBlock);
       }
-
+      // Skip rendering this block if the description is "delete"
+      if (block.desc === "delete") {
+        continue; // Skip this block, do not render
+      }
       // Clone the block template
       const blockElement = template.content.cloneNode(true) as HTMLElement;
 
