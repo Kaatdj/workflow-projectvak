@@ -336,7 +336,7 @@ function renderBlocks(blocks) {
             }
             console.log("Rendering block:", block);
             // Skip rendering this block if the description is "delete"
-            if (block.status === "deleted") {
+            if (block.type === "deleted") {
                 console.log("Skipping block \"".concat(block.title, "\" due to delete instruction."));
                 return "continue";
             }
@@ -490,7 +490,7 @@ function openEditPopup(block) {
     var deleteButton = document.getElementById("deleteBlock");
     if (deleteButton) {
         deleteButton.onclick = function () {
-            block.status = "deleted";
+            block.type = "deleted";
             window.parent.postMessage({ type: "updateBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
             popup.classList.add("hidden");
             console.log("Block \"".concat(block.title, "\" marked as delete."));
