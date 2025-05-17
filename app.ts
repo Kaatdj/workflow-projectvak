@@ -399,6 +399,7 @@ function renderBlocks(blocks) {
 
       // Set the initial status circle color for all blocks
       if (statusCircle) {
+        statusCircle.style.background = ""; // Remove any inline background color
         statusCircle.classList.remove(
           "status-completed",
           "status-in-progress",
@@ -411,7 +412,7 @@ function renderBlocks(blocks) {
           statusCircle.classList.add("status-in-progress");
         } else if (block.status === "cancelled") {
           statusCircle.classList.add("status-cancelled");
-        } else {
+        } else if (block.status === "unavailable") {
           statusCircle.classList.add("status-to-be-planned");
         }
       }

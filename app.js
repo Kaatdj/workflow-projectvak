@@ -357,6 +357,7 @@ function renderBlocks(blocks) {
                 typeElement.textContent = "Type: ".concat(block.type || "No type");
             // Set the initial status circle color for all blocks
             if (statusCircle) {
+                statusCircle.style.background = ""; // Remove any inline background color
                 statusCircle.classList.remove("status-completed", "status-in-progress", "status-cancelled", "status-to-be-planned");
                 if (block.status === "done") {
                     statusCircle.classList.add("status-completed");
@@ -367,7 +368,7 @@ function renderBlocks(blocks) {
                 else if (block.status === "cancelled") {
                     statusCircle.classList.add("status-cancelled");
                 }
-                else {
+                else if (block.status === "unavailable") {
                     statusCircle.classList.add("status-to-be-planned");
                 }
             }

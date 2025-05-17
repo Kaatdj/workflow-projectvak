@@ -111,7 +111,7 @@ body {
 
 /* Status colors */
 .status-to-be-planned {
-  background-color: #999999;
+  background-color: #999999 !important;
 }
 
 .status-completed {
