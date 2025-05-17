@@ -281,6 +281,7 @@ window.addEventListener("DOMContentLoaded", () => {
       // Remove the unsaved block from the DOM
       if (currentBlock && currentBlock.parentElement) {
         currentBlock.parentElement.removeChild(currentBlock);
+        updateBrackets();
       }
 
       // Hide the popup
