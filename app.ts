@@ -3,6 +3,7 @@ let currentBlock: HTMLElement | null = null;
 
 // Global counter for column IDs
 let columnCounter = 0;
+let membersList: string[] = [];
 
 function updateBrackets() {
   const canvas = document.getElementById("canvas"); // <-- You missed this!
@@ -175,6 +176,19 @@ function ensureExtraColumn() {
   }
 }
 
+function populateMemberDropdown(selectedMember: string = "") {
+  const memberInput = document.getElementById("popupMember") as HTMLSelectElement | null;
+  if (!memberInput) return;
+  memberInput.innerHTML = '<option value="" disabled>Select Members</option>';
+  membersList.forEach(member => {
+    const option = document.createElement("option");
+    option.value = member;
+    option.textContent = member;
+    if (member === selectedMember) option.selected = true;
+    memberInput.appendChild(option);
+  });
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   const popup = document.getElementById("popup");
   const titleInput = document.getElementById("popupTitleInput") as HTMLInputElement | null;
@@ -301,6 +315,16 @@ window.addEventListener("message", function(event) {
     const blocks = event.data.data;
     console.log("Loading blocks into workflow:", blocks);
     renderBlocks(blocks);
+  }
+  if (event.data.type === "loadMembers") {
+  // If data is array of objects with membersName property
+  if (Array.isArray(event.data.data) && event.data.data.length && typeof event.data.data[0] === "object") {
+    membersList = event.data.data.map((m: any) => m.membersName);
+  } else {
+    membersList = event.data.data; // fallback for array of strings
+  }    
+    populateMemberDropdown();
+    console.log("Loaded members:", membersList);
   }
 });
 
@@ -502,47 +526,46 @@ function renderBlocks(blocks) {
 
 // Function to open the popup and populate it with block data
 function openEditPopup(block) {
-    const popup = document.getElementById("popup");
-    const titleInput = document.getElementById("popupTitleInput") as HTMLInputElement;
-    const descInput = document.getElementById("popupDesc") as HTMLTextAreaElement;
-    const memberInput = document.getElementById("popupMember") as HTMLSelectElement;
-    const dueDateInput = document.getElementById("popupDueDate") as HTMLInputElement;
-    const typeInput = document.getElementById("popupType") as HTMLSelectElement;
-    const savePopup = document.getElementById("savePopup");
+  const popup = document.getElementById("popup");
+  const titleInput = document.getElementById("popupTitleInput") as HTMLInputElement;
+  const descInput = document.getElementById("popupDesc") as HTMLTextAreaElement;
+  const dueDateInput = document.getElementById("popupDueDate") as HTMLInputElement;
+  const typeInput = document.getElementById("popupType") as HTMLSelectElement;
+  const savePopup = document.getElementById("savePopup");
 
-    if (!popup || !titleInput || !descInput || !memberInput || !dueDateInput || !typeInput || !savePopup) {
-        console.error("Popup or input elements not found!");
-        return;
-    }
+  if (!popup || !titleInput || !descInput || !dueDateInput || !typeInput || !savePopup) {
+    console.error("Popup or input elements not found!");
+    return;
+  }
 
-    // Populate the popup with the block's current data
-    titleInput.value = block.title || "";
-    descInput.value = block.desc || "";
-    memberInput.value = block.member || "";
-    dueDateInput.value = block.dueDate || "";
-    typeInput.value = block.type || "";
+  // Populate the popup with the block's current data
+  titleInput.value = block.title || "";
+  descInput.value = block.desc || "";
+  populateMemberDropdown(block.member || ""); // <-- Use the function here
+  dueDateInput.value = block.dueDate || "";
+  typeInput.value = block.type || "";
 
-    // Show the popup
-    popup.classList.remove("hidden");
+  // Show the popup
+  popup.classList.remove("hidden");
 
-    // Handle saving the updated block data
-    savePopup.onclick = () => {
-        block.title = titleInput.value.trim();
-        block.desc = descInput.value.trim();
-        block.member = memberInput.value;
-        block.dueDate = dueDateInput.value.trim();
-        block.type = typeInput.value;
+  // Handle saving the updated block data
+  savePopup.onclick = () => {
+    block.title = titleInput.value.trim();
+    block.desc = descInput.value.trim();
+    block.member = (document.getElementById("popupMember") as HTMLSelectElement).value;
+    block.dueDate = dueDateInput.value.trim();
+    block.type = typeInput.value;
 
-        // Send the updated block to the Bubble database
-        window.parent.postMessage({ type: "updateBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
+    // Send the updated block to the Bubble database
+    window.parent.postMessage({ type: "updateBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
 
-        // Hide the popup
-        popup.classList.add("hidden");
+    // Hide the popup
+    popup.classList.add("hidden");
 
-        console.log(`Block "${block.title}" updated and saved.`);
-    };
+    console.log(`Block "${block.title}" updated and saved.`);
+  };
 
-    const deleteButton = document.getElementById("deleteBlock");
+  const deleteButton = document.getElementById("deleteBlock");
   if (deleteButton) {
     deleteButton.onclick = () => {
       block.type = "deleted";

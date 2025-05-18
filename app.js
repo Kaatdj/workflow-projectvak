@@ -2,6 +2,7 @@ var draggedBlock = null;
 var currentBlock = null;
 // Global counter for column IDs
 var columnCounter = 0;
+var membersList = [];
 function updateBrackets() {
     var canvas = document.getElementById("canvas"); // <-- You missed this!
     var bracketsContainer = document.getElementById("brackets");
@@ -154,6 +155,21 @@ function ensureExtraColumn() {
         createColumn(canvas);
     }
 }
+function populateMemberDropdown(selectedMember) {
+    if (selectedMember === void 0) { selectedMember = ""; }
+    var memberInput = document.getElementById("popupMember");
+    if (!memberInput)
+        return;
+    memberInput.innerHTML = '<option value="" disabled>Select Members</option>';
+    membersList.forEach(function (member) {
+        var option = document.createElement("option");
+        option.value = member;
+        option.textContent = member;
+        if (member === selectedMember)
+            option.selected = true;
+        memberInput.appendChild(option);
+    });
+}
 window.addEventListener("DOMContentLoaded", function () {
     var popup = document.getElementById("popup");
     var titleInput = document.getElementById("popupTitleInput");
@@ -261,6 +277,17 @@ window.addEventListener("message", function (event) {
         var blocks = event.data.data;
         console.log("Loading blocks into workflow:", blocks);
         renderBlocks(blocks);
+    }
+    if (event.data.type === "loadMembers") {
+        // If data is array of objects with membersName property
+        if (Array.isArray(event.data.data) && event.data.data.length && typeof event.data.data[0] === "object") {
+            membersList = event.data.data.map(function (m) { return m.membersName; });
+        }
+        else {
+            membersList = event.data.data; // fallback for array of strings
+        }
+        populateMemberDropdown();
+        console.log("Loaded members:", membersList);
     }
 });
 // ✅ Function to render blocks from database
@@ -463,18 +490,17 @@ function openEditPopup(block) {
     var popup = document.getElementById("popup");
     var titleInput = document.getElementById("popupTitleInput");
     var descInput = document.getElementById("popupDesc");
-    var memberInput = document.getElementById("popupMember");
     var dueDateInput = document.getElementById("popupDueDate");
     var typeInput = document.getElementById("popupType");
     var savePopup = document.getElementById("savePopup");
-    if (!popup || !titleInput || !descInput || !memberInput || !dueDateInput || !typeInput || !savePopup) {
+    if (!popup || !titleInput || !descInput || !dueDateInput || !typeInput || !savePopup) {
         console.error("Popup or input elements not found!");
         return;
     }
     // Populate the popup with the block's current data
     titleInput.value = block.title || "";
     descInput.value = block.desc || "";
-    memberInput.value = block.member || "";
+    populateMemberDropdown(block.member || ""); // <-- Use the function here
     dueDateInput.value = block.dueDate || "";
     typeInput.value = block.type || "";
     // Show the popup
@@ -483,7 +509,7 @@ function openEditPopup(block) {
     savePopup.onclick = function () {
         block.title = titleInput.value.trim();
         block.desc = descInput.value.trim();
-        block.member = memberInput.value;
+        block.member = document.getElementById("popupMember").value;
         block.dueDate = dueDateInput.value.trim();
         block.type = typeInput.value;
         // Send the updated block to the Bubble database
