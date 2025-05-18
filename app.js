@@ -1,4 +1,5 @@
 var draggedBlock = null;
+var draggedBlockData = {}; // <-- Add this line
 var currentBlock = null;
 // Global counter for column IDs
 var columnCounter = 0;
@@ -135,8 +136,17 @@ function createColumn(parent, isStartColumn) {
             col.appendChild(clone);
             // Show the popup to fill in block details
             var popup = document.getElementById("popup");
+            var titleInput = document.getElementById("popupTitleInput");
+            var typeInput = document.getElementById("popupType");
             if (popup)
                 popup.classList.remove("hidden");
+            // Prefill title and type if available
+            if (titleInput && draggedBlockData.title)
+                titleInput.value = draggedBlockData.title;
+            if (typeInput && draggedBlockData.type)
+                typeInput.value = draggedBlockData.type;
+            // Optionally clear draggedBlockData after use
+            draggedBlockData = {};
             draggedBlock = null;
             ensureExtraColumn();
             updateBrackets();
@@ -204,6 +214,11 @@ window.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".draggable").forEach(function (el) {
         el.addEventListener("dragstart", function () {
             draggedBlock = el;
+            // Store data attributes for pre-filling
+            draggedBlockData = {
+                title: draggedBlock.getAttribute("data-title") || "",
+                type: draggedBlock.getAttribute("data-type") || ""
+            };
         });
     });
     // Save block content from popup
