@@ -209,6 +209,19 @@ window.addEventListener("DOMContentLoaded", function () {
     // Save block content from popup
     savePopup.addEventListener("click", function () {
         if (currentBlock && titleInput && descInput && memberInput && dueDateInput && typeInput) {
+            // Validation for required fields
+            if (!titleInput.value.trim()) {
+                titleInput.focus();
+                return;
+            }
+            if (!memberInput.value) {
+                memberInput.focus();
+                return;
+            }
+            if (!typeInput.value) {
+                typeInput.focus();
+                return;
+            }
             var title = titleInput.value.trim();
             var desc = descInput.value.trim();
             var member = memberInput.value;
