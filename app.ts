@@ -261,12 +261,23 @@ window.addEventListener("DOMContentLoaded", () => {
         typeInput.focus();
         return;
       }
+      if (!dueDateInput.value) {
+        dueDateInput.focus();
+        return;
+      }
 
       const title = titleInput.value.trim();
       const desc = descInput.value.trim();
       const member = memberInput.value;
-      const dueDate = dueDateInput.value.trim();
+      const dueDateRaw = dueDateInput.value.trim(); // yyyy-mm-dd
       const type = typeInput.value;
+
+      // Convert yyyy-mm-dd to dd/mm/jjjj
+      let dueDate = "";
+      if (dueDateRaw) {
+        const [year, month, day] = dueDateRaw.split("-");
+        dueDate = `${day}/${month}/${year}`;
+      }
 
       currentBlock.innerText = "";
 

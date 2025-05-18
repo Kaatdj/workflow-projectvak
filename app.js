@@ -237,11 +237,21 @@ window.addEventListener("DOMContentLoaded", function () {
                 typeInput.focus();
                 return;
             }
+            if (!dueDateInput.value) {
+                dueDateInput.focus();
+                return;
+            }
             var title = titleInput.value.trim();
             var desc = descInput.value.trim();
             var member = memberInput.value;
-            var dueDate = dueDateInput.value.trim();
+            var dueDateRaw = dueDateInput.value.trim(); // yyyy-mm-dd
             var type = typeInput.value;
+            // Convert yyyy-mm-dd to dd/mm/jjjj
+            var dueDate = "";
+            if (dueDateRaw) {
+                var _a = dueDateRaw.split("-"), year = _a[0], month = _a[1], day = _a[2];
+                dueDate = "".concat(day, "/").concat(month, "/").concat(year);
+            }
             currentBlock.innerText = "";
             // Get the column ID where the block is placed
             var column = currentBlock.parentElement;
