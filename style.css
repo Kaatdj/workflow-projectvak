@@ -395,7 +395,7 @@ body {
   position: absolute;
   top: 24px;
   right: 36px;
-  z-index: 1100;
+  z-index: 0;
   background: #2077FA;
   color: #fff;
   padding: 10px 32px;
