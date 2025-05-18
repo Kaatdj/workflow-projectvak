@@ -390,3 +390,27 @@ body {
   transform: translateX(0); /* Ensure the right bracket is fully to the right of the column */
 }
 
+/* Edit button at top right */
+.edit-btn-top {
+  position: absolute;
+  top: 24px;
+  right: 36px;
+  z-index: 1100;
+  background: #2077FA;
+  color: #fff;
+  padding: 10px 32px;
+  border-radius: 7px;
+  border: none;
+  font-size: 16px;
+  font-family: 'Inter', Arial, sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(32,119,250,0.08);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.edit-btn-top:hover {
+  background: #165dc5;
+  box-shadow: 0 4px 16px rgba(32,119,250,0.16);
+}
+
