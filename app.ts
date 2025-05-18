@@ -523,7 +523,9 @@ function renderBlocks(blocks) {
         blockDiv.setAttribute("data-id", block.id);
         blockDiv.setAttribute("data-column-id", colId || "");
         blockDiv.addEventListener("click", () => {
-          openEditPopup(block);
+          if (block.status !== "done") {
+            openEditPopup(block);
+          }
         });
       }
 
