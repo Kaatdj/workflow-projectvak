@@ -235,6 +235,23 @@ window.addEventListener("DOMContentLoaded", () => {
   // Save block content from popup
   savePopup.addEventListener("click", () => {
     if (currentBlock && titleInput && descInput && memberInput && dueDateInput && typeInput) {
+      // Validation for required fields
+      if (!titleInput.value.trim()) {
+        alert("Title is required.");
+        titleInput.focus();
+        return;
+      }
+      if (!memberInput.value) {
+        alert("Member is required.");
+        memberInput.focus();
+        return;
+      }
+      if (!typeInput.value) {
+        alert("Type is required.");
+        typeInput.focus();
+        return;
+      }
+
       const title = titleInput.value.trim();
       const desc = descInput.value.trim();
       const member = memberInput.value;

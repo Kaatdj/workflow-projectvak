@@ -57,16 +57,15 @@
   <div id="popup" class="hidden popup-overlay" role="dialog" aria-labelledby="popupTitle">
     <div class="popup-content">
       <h2 id="popupTitle">New Task</h2>
-      <input type="text" id="popupTitleInput" placeholder="Task Title"/>
-      <select id="popupMember">
+      <input type="text" id="popupTitleInput" placeholder="Task Title" required />
+      <select id="popupMember" required>
         <option value="" disabled selected>Select Members</option>
       </select>
       <textarea id="popupDesc" placeholder="Task Description"></textarea>
-      <select id="popupType">
+      <select id="popupType" required>
         <option value="" disabled selected>Select Type of Task</option>
         <option value="typeApproval">Approval</option>
-        <option value="typeAccept">Regular Task now it should work?</option>
-        <!--<option value="typeSubmit">Submit</option> -->
+        <option value="typeAccept">Regular Task</option>
       </select>
       <input type="text" id="popupDueDate" placeholder="Due Date"/>
       <button id="deleteBlock">Delete</button>
