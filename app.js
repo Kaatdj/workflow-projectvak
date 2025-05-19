@@ -418,11 +418,13 @@ function renderBlocks(blocks) {
                 for (var _a = 0, colBlocks_1 = colBlocks; _a < colBlocks_1.length; _a++) {
                     var b = colBlocks_1[_a];
                     if (b.type === "typeEnded") {
-                        b.status = "done";
-                        // Update the block in the backend/parent
-                        window.parent.postMessage({ type: "updateBlock", data: b }, "https://valcori-99218.bubbleapps.io/version-test");
-                        // Optionally also send your endedBlock message
-                        window.parent.postMessage({ type: "endedBlock", data: b }, "https://valcori-99218.bubbleapps.io/version-test");
+                        if (b.status !== "done") {
+                            b.status = "done";
+                            // Update the block in the backend/parent
+                            window.parent.postMessage({ type: "updateBlock", data: b }, "https://valcori-99218.bubbleapps.io/version-test");
+                            // Optionally also send your endedBlock message
+                            window.parent.postMessage({ type: "endedBlock", data: b }, "https://valcori-99218.bubbleapps.io/version-test");
+                        }
                     }
                     else if (b.status !== "done" && b.status !== "cancelled") {
                         b.status = "busy";

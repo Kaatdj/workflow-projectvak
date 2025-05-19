@@ -463,11 +463,13 @@ function renderBlocks(blocks) {
       if (prevBlocksDone) {
         for (let b of colBlocks) {
           if (b.type === "typeEnded") {
+            if (b.status !== "done") {
             b.status = "done";
             // Update the block in the backend/parent
             window.parent.postMessage({ type: "updateBlock", data: b }, "https://valcori-99218.bubbleapps.io/version-test");
             // Optionally also send your endedBlock message
             window.parent.postMessage({ type: "endedBlock", data: b }, "https://valcori-99218.bubbleapps.io/version-test");
+            }
           } else if (b.status !== "done" && b.status !== "cancelled") {
             b.status = "busy";
           }
