@@ -135,11 +135,13 @@ function createColumn(parent, isStartColumn) {
             }
             col.appendChild(clone);
             if (draggedBlockData.type === "typeEnded") {
-                // Immediately assign ID and minimal data
                 var blockId = generateUniqueId();
+                // Remove all classes and set only "block"
+                clone.className = "block";
+                // Set minimal inner HTML for end block
+                clone.innerHTML = "\n          <div class=\"status-circle\"></div>\n          <div class=\"block-title\">".concat(draggedBlockData.title || "Einde", "</div>\n        ");
                 clone.setAttribute("data-id", blockId);
                 var columnId_2 = col.getAttribute("data-column-id");
-                // Prepare minimal block data
                 var blockData = {
                     status: "unavailable",
                     title: draggedBlockData.title || "Einde",
@@ -150,9 +152,7 @@ function createColumn(parent, isStartColumn) {
                     columnId: columnId_2 || null,
                     id: blockId,
                 };
-                // Send to backend or parent
                 window.parent.postMessage({ type: "saveBlock", data: blockData }, "https://valcori-99218.bubbleapps.io/version-test");
-                // No popup, just return
                 draggedBlockData = {};
                 draggedBlock = null;
                 ensureExtraColumn();
