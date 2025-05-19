@@ -138,13 +138,15 @@ function createColumn(parent, isStartColumn) {
             var popup = document.getElementById("popup");
             var titleInput = document.getElementById("popupTitleInput");
             var typeInput = document.getElementById("popupType");
-            if (popup)
+            // Only show popup if not typeEnded
+            if (popup && draggedBlockData.type !== "typeEnded") {
                 popup.classList.remove("hidden");
-            // Prefill title and type if available
-            if (titleInput && draggedBlockData.title)
-                titleInput.value = draggedBlockData.title;
-            if (typeInput && draggedBlockData.type)
-                typeInput.value = draggedBlockData.type;
+                // Prefill title and type if available
+                if (titleInput && draggedBlockData.title)
+                    titleInput.value = draggedBlockData.title;
+                if (typeInput && draggedBlockData.type)
+                    typeInput.value = draggedBlockData.type;
+            }
             // Optionally clear draggedBlockData after use
             draggedBlockData = {};
             draggedBlock = null;

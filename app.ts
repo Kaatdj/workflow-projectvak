@@ -158,10 +158,13 @@ function createColumn(parent: HTMLElement, isStartColumn = false) {
       const popup = document.getElementById("popup");
       const titleInput = document.getElementById("popupTitleInput") as HTMLInputElement | null;
       const typeInput = document.getElementById("popupType") as HTMLSelectElement | null;
-      if (popup) popup.classList.remove("hidden");
-      // Prefill title and type if available
-      if (titleInput && draggedBlockData.title) titleInput.value = draggedBlockData.title;
-      if (typeInput && draggedBlockData.type) typeInput.value = draggedBlockData.type;
+      // Only show popup if not typeEnded
+      if (popup && draggedBlockData.type !== "typeEnded") {
+        popup.classList.remove("hidden");
+        // Prefill title and type if available
+        if (titleInput && draggedBlockData.title) titleInput.value = draggedBlockData.title;
+        if (typeInput && draggedBlockData.type) typeInput.value = draggedBlockData.type;
+      }
       // Optionally clear draggedBlockData after use
       draggedBlockData = {};
       draggedBlock = null;
