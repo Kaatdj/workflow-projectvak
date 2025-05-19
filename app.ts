@@ -539,7 +539,7 @@ function renderBlocks(blocks) {
       }
 
   // redirect
-      if (block.type === "start" && redirectButton) {
+      if (block.type === "typeSubmit" && redirectButton) {
         redirectButton.classList.remove("hidden");
         if (block.status === "done") {
           redirectButton.textContent = "Submitted";
