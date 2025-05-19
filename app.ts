@@ -549,13 +549,6 @@ function renderBlocks(blocks) {
         }
         redirectButton.addEventListener("click", (event) => {
           event.stopPropagation();
-          block.status = "done";
-          redirectButton.textContent = "Submitted";
-          redirectButton.disabled = true;
-          if (statusCircle) {
-            statusCircle.classList.remove("status-to-be-planned", "status-in-progress", "status-cancelled");
-            statusCircle.classList.add("status-completed");
-          }
           window.parent.postMessage({ type: "redirectBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
           console.log(`Block "${block.title}" redirected.`);
         });
