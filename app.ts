@@ -154,6 +154,33 @@ function createColumn(parent: HTMLElement, isStartColumn = false) {
         console.log(`Block added to column "${columnId}".`);
       }
       col.appendChild(clone);
+
+      if (draggedBlockData.type === "typeEnded") {
+        // Immediately assign ID and minimal data
+        const blockId = generateUniqueId();
+        clone.setAttribute("data-id", blockId);
+        const columnId = col.getAttribute("data-column-id");
+        // Prepare minimal block data
+        const blockData = {
+          status: "unavailable",
+          title: draggedBlockData.title || "Einde",
+          desc: "",
+          member: "",
+          dueDate: "",
+          type: "typeEnded",
+          columnId: columnId || null,
+          id: blockId,
+        };
+        // Send to backend or parent
+        window.parent.postMessage({ type: "saveBlock", data: blockData }, "https://valcori-99218.bubbleapps.io/version-test");
+        // No popup, just return
+        draggedBlockData = {};
+        draggedBlock = null;
+        ensureExtraColumn();
+        updateBrackets();
+        return;
+      }
+
       // Show the popup to fill in block details
       const popup = document.getElementById("popup");
       const titleInput = document.getElementById("popupTitleInput") as HTMLInputElement | null;
