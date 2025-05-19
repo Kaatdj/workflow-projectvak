@@ -463,6 +463,7 @@ function renderBlocks(blocks) {
       const typeElement = blockElement.querySelector(".block-type");
       const approveButton = blockElement.querySelector(".approve-button") as HTMLButtonElement;
       const doneButton = blockElement.querySelector(".done-button") as HTMLButtonElement;
+      const redirectButton = blockElement.querySelector(".redirect-button") as HTMLButtonElement;
       const statusCircle = blockElement.querySelector(".status-circle") as HTMLElement;
 
       if (titleElement) titleElement.textContent = block.title || "Naamloos blok";
@@ -536,6 +537,31 @@ function renderBlocks(blocks) {
           console.log(`Block "${block.title}" marked as done.`);
         });
       }
+
+  // redirect
+      if (block.type === "start" && redirectButton) {
+        redirectButton.classList.remove("hidden");
+        if (block.status === "done") {
+          redirectButton.textContent = "Submitted";
+          redirectButton.disabled = true;
+        } else {
+          redirectButton.textContent = "Fill in";
+        }
+        redirectButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+          block.status = "done";
+          redirectButton.textContent = "Submitted";
+          redirectButton.disabled = true;
+          if (statusCircle) {
+            statusCircle.classList.remove("status-to-be-planned", "status-in-progress", "status-cancelled");
+            statusCircle.classList.add("status-completed");
+          }
+          window.parent.postMessage({ type: "redirectBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
+          console.log(`Block "${block.title}" redirected.`);
+        });
+      }
+
+
 
       // Add click event listener to the block for editing
       const blockDiv = blockElement.querySelector(".block") as HTMLElement;

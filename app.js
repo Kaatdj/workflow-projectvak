@@ -421,6 +421,7 @@ function renderBlocks(blocks) {
             var typeElement = blockElement.querySelector(".block-type");
             var approveButton = blockElement.querySelector(".approve-button");
             var doneButton = blockElement.querySelector(".done-button");
+            var redirectButton = blockElement.querySelector(".redirect-button");
             var statusCircle = blockElement.querySelector(".status-circle");
             if (titleElement)
                 titleElement.textContent = block.title || "Naamloos blok";
@@ -493,6 +494,29 @@ function renderBlocks(blocks) {
                     }
                     window.parent.postMessage({ type: "updateBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
                     console.log("Block \"".concat(block.title, "\" marked as done."));
+                });
+            }
+            // redirect
+            if (block.type === "start" && redirectButton) {
+                redirectButton.classList.remove("hidden");
+                if (block.status === "done") {
+                    redirectButton.textContent = "Submitted";
+                    redirectButton.disabled = true;
+                }
+                else {
+                    redirectButton.textContent = "Fill in";
+                }
+                redirectButton.addEventListener("click", function (event) {
+                    event.stopPropagation();
+                    block.status = "done";
+                    redirectButton.textContent = "Submitted";
+                    redirectButton.disabled = true;
+                    if (statusCircle) {
+                        statusCircle.classList.remove("status-to-be-planned", "status-in-progress", "status-cancelled");
+                        statusCircle.classList.add("status-completed");
+                    }
+                    window.parent.postMessage({ type: "redirectBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
+                    console.log("Block \"".concat(block.title, "\" redirected."));
                 });
             }
             // Add click event listener to the block for editing
