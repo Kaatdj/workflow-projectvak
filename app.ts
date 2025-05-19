@@ -595,6 +595,7 @@ function renderBlocks(blocks) {
           redirectButton.textContent = "redirecting...";
           redirectButton.disabled = true;
           if (block.title === "RFI") {
+            console.log("RFI block clicked");
             window.parent.postMessage({ type: "redirectBlockRFI", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
           } else if (block.title === "RFQ") {
             window.parent.postMessage({ type: "redirectBlockRFQ", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
