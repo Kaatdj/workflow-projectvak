@@ -419,6 +419,8 @@ function renderBlocks(blocks) {
                     var b = colBlocks_1[_a];
                     if (b.type === "typeEnded") {
                         b.status = "done";
+                        // Stuur een bericht naar de parent als het endblock op done wordt gezet
+                        window.parent.postMessage({ type: "endedBlock", data: b }, "https://valcori-99218.bubbleapps.io/version-test");
                     }
                     else if (b.status !== "done" && b.status !== "cancelled") {
                         b.status = "busy";
