@@ -578,16 +578,14 @@ function openEditPopup(block) {
   titleInput.value = block.title || "";
   descInput.value = block.desc || "";
   populateMemberDropdown(block.member || ""); // <-- Use the function here
-  dueDateInput.value = block.dueDate || "";
-  typeInput.value = block.type || "";
-
-  // Convert dd/mm/jjjj to yyyy-mm-dd for the date input
   if (block.dueDate && block.dueDate.includes("/")) {
     const [day, month, year] = block.dueDate.split("/");
     dueDateInput.value = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
   } else {
     dueDateInput.value = block.dueDate || "";
-  }
+  }  
+  typeInput.value = block.type || "";
+
 
   // Show the popup
   popup.classList.remove("hidden");

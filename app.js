@@ -535,9 +535,6 @@ function openEditPopup(block) {
     titleInput.value = block.title || "";
     descInput.value = block.desc || "";
     populateMemberDropdown(block.member || ""); // <-- Use the function here
-    dueDateInput.value = block.dueDate || "";
-    typeInput.value = block.type || "";
-    // Convert dd/mm/jjjj to yyyy-mm-dd for the date input
     if (block.dueDate && block.dueDate.includes("/")) {
         var _a = block.dueDate.split("/"), day = _a[0], month = _a[1], year = _a[2];
         dueDateInput.value = "".concat(year, "-").concat(month.padStart(2, "0"), "-").concat(day.padStart(2, "0"));
@@ -545,6 +542,7 @@ function openEditPopup(block) {
     else {
         dueDateInput.value = block.dueDate || "";
     }
+    typeInput.value = block.type || "";
     // Show the popup
     popup.classList.remove("hidden");
     // Handle saving the updated block data
