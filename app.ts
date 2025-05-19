@@ -469,11 +469,20 @@ function renderBlocks(blocks) {
       const redirectButton = blockElement.querySelector(".redirect-button") as HTMLButtonElement;
       const statusCircle = blockElement.querySelector(".status-circle") as HTMLElement;
 
-      if (titleElement) titleElement.textContent = block.title || "Naamloos blok";
-      if (descElement) descElement.textContent = block.desc || "No desc";
-      if (memberElement) memberElement.textContent = `Assigned to: ${block.member || "None"}`;
-      if (dueDateElement) dueDateElement.textContent = `Due: ${block.dueDate || "No due date"}`;
-      if (typeElement) typeElement.textContent = `Type: ${block.type || "No type"}`;
+      if (block.type === "typeEnded") {
+        // Only show title and status circle
+        if (titleElement) titleElement.textContent = block.title || "Naamloos blok";
+        if (descElement) descElement.remove();
+        if (memberElement) memberElement.remove();
+        if (dueDateElement) dueDateElement.remove();
+        if (typeElement) typeElement?.remove();
+      } else {
+        if (titleElement) titleElement.textContent = block.title || "Naamloos blok";
+        if (descElement) descElement.textContent = block.desc || "No desc";
+        if (memberElement) memberElement.textContent = `Assigned to: ${block.member || "None"}`;
+        if (dueDateElement) dueDateElement.textContent = `Due: ${block.dueDate || "No due date"}`;
+        if (typeElement) typeElement.textContent = `Type: ${block.type || "No type"}`;
+      }
 
       // Set the initial status circle color for all blocks
       if (statusCircle) {
@@ -568,7 +577,7 @@ function renderBlocks(blocks) {
         blockDiv.setAttribute("data-id", block.id);
         blockDiv.setAttribute("data-column-id", colId || "");
         blockDiv.addEventListener("click", () => {
-          if (block.status !== "done") {
+          if (block.status !== "done" && block.type !== "typeEnded") {
             openEditPopup(block);
           }
         });
