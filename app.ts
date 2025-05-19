@@ -594,7 +594,11 @@ function renderBlocks(blocks) {
           block.status = "busy";
           redirectButton.textContent = "redirecting...";
           redirectButton.disabled = true;
-          window.parent.postMessage({ type: "redirectBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
+          if (block.title === "start") {
+            window.parent.postMessage({ type: "redirectBlockRFI", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
+          } else if (block.title === "RFQ") {
+            window.parent.postMessage({ type: "redirectBlockRFQ", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
+          }
           console.log(`Block "${block.title}" redirected.`);
         });
       }
