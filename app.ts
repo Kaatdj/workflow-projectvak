@@ -577,7 +577,7 @@ function renderBlocks(blocks) {
         blockDiv.setAttribute("data-id", block.id);
         blockDiv.setAttribute("data-column-id", colId || "");
         blockDiv.addEventListener("click", () => {
-          if (block.status !== "done" && block.type !== "typeEnded") {
+          if (block.status !== "done" || block.type !== "typeEnded") {
             openEditPopup(block);
           }
         });

@@ -427,16 +427,31 @@ function renderBlocks(blocks) {
             var doneButton = blockElement.querySelector(".done-button");
             var redirectButton = blockElement.querySelector(".redirect-button");
             var statusCircle = blockElement.querySelector(".status-circle");
-            if (titleElement)
-                titleElement.textContent = block.title || "Naamloos blok";
-            if (descElement)
-                descElement.textContent = block.desc || "No desc";
-            if (memberElement)
-                memberElement.textContent = "Assigned to: ".concat(block.member || "None");
-            if (dueDateElement)
-                dueDateElement.textContent = "Due: ".concat(block.dueDate || "No due date");
-            if (typeElement)
-                typeElement.textContent = "Type: ".concat(block.type || "No type");
+            if (block.type === "typeEnded") {
+                // Only show title and status circle
+                if (titleElement)
+                    titleElement.textContent = block.title || "Naamloos blok";
+                if (descElement)
+                    descElement.remove();
+                if (memberElement)
+                    memberElement.remove();
+                if (dueDateElement)
+                    dueDateElement.remove();
+                if (typeElement)
+                    typeElement === null || typeElement === void 0 ? void 0 : typeElement.remove();
+            }
+            else {
+                if (titleElement)
+                    titleElement.textContent = block.title || "Naamloos blok";
+                if (descElement)
+                    descElement.textContent = block.desc || "No desc";
+                if (memberElement)
+                    memberElement.textContent = "Assigned to: ".concat(block.member || "None");
+                if (dueDateElement)
+                    dueDateElement.textContent = "Due: ".concat(block.dueDate || "No due date");
+                if (typeElement)
+                    typeElement.textContent = "Type: ".concat(block.type || "No type");
+            }
             // Set the initial status circle color for all blocks
             if (statusCircle) {
                 statusCircle.style.background = ""; // Remove any inline background color
@@ -525,7 +540,7 @@ function renderBlocks(blocks) {
                 blockDiv.setAttribute("data-id", block.id);
                 blockDiv.setAttribute("data-column-id", colId || "");
                 blockDiv.addEventListener("click", function () {
-                    if (block.status !== "done") {
+                    if (block.status !== "done" || block.type !== "typeEnded") {
                         openEditPopup(block);
                     }
                 });
