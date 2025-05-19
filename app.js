@@ -456,9 +456,6 @@ function renderBlocks(blocks) {
                     approveButton.textContent = "Approved";
                     approveButton.disabled = true;
                 }
-                else if (block.status === "unavailable") {
-                    doneButton.disabled = true;
-                }
                 else {
                     approveButton.textContent = "Approve";
                 }
@@ -480,9 +477,6 @@ function renderBlocks(blocks) {
                 doneButton.classList.remove("hidden");
                 if (block.status === "done") {
                     doneButton.textContent = "Done ✔";
-                    doneButton.disabled = true;
-                }
-                else if (block.status === "unavailable") {
                     doneButton.disabled = true;
                 }
                 else {
