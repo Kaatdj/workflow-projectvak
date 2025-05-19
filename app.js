@@ -386,10 +386,14 @@ function renderBlocks(blocks) {
                     break;
             }
             // If all previous blocks are done, set current column's blocks to busy (unless done/cancelled)
+            // For typeEnded, set status to done
             if (prevBlocksDone) {
                 for (var _a = 0, colBlocks_1 = colBlocks; _a < colBlocks_1.length; _a++) {
                     var b = colBlocks_1[_a];
-                    if (b.status !== "done" && b.status !== "cancelled") {
+                    if (b.type === "typeEnded") {
+                        b.status = "done";
+                    }
+                    else if (b.status !== "done" && b.status !== "cancelled") {
                         b.status = "busy";
                     }
                 }
@@ -508,13 +512,9 @@ function renderBlocks(blocks) {
                 }
                 redirectButton.addEventListener("click", function (event) {
                     event.stopPropagation();
-                    block.status = "done";
-                    redirectButton.textContent = "Submitted";
+                    block.status = "busy";
+                    redirectButton.textContent = "redirecting...";
                     redirectButton.disabled = true;
-                    if (statusCircle) {
-                        statusCircle.classList.remove("status-to-be-planned", "status-in-progress", "status-cancelled");
-                        statusCircle.classList.add("status-completed");
-                    }
                     window.parent.postMessage({ type: "redirectBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
                     console.log("Block \"".concat(block.title, "\" redirected."));
                 });

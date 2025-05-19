@@ -426,9 +426,12 @@ function renderBlocks(blocks) {
         if (!prevBlocksDone) break;
       }
       // If all previous blocks are done, set current column's blocks to busy (unless done/cancelled)
+      // For typeEnded, set status to done
       if (prevBlocksDone) {
         for (let b of colBlocks) {
-          if (b.status !== "done" && b.status !== "cancelled") {
+          if (b.type === "typeEnded") {
+            b.status = "done";
+          } else if (b.status !== "done" && b.status !== "cancelled") {
             b.status = "busy";
           }
         }
@@ -549,6 +552,9 @@ function renderBlocks(blocks) {
         }
         redirectButton.addEventListener("click", (event) => {
           event.stopPropagation();
+          block.status = "busy";
+          redirectButton.textContent = "redirecting...";
+          redirectButton.disabled = true;
           window.parent.postMessage({ type: "redirectBlock", data: block }, "https://valcori-99218.bubbleapps.io/version-test");
           console.log(`Block "${block.title}" redirected.`);
         });
